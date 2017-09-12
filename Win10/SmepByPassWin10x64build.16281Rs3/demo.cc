@@ -1,4 +1,32 @@
 
+
+/*
+ <---- demo.cc
+ 
+ 	this very simplified rop chain will get you code execution on the latest win build
+ 	and intel firmware dispite Mitigations.
+ 
+ 	it needs ntoskrnl base address or alternatively a kernel pointer leak.
+	Copy & usage of this software are allowed without any restrictions.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+	
+	NOTE: Recovery from the ShellCode is up to you 
+	& depands on your specific Exploit...
+	i can only guarantee Code Execution.
+	
+	This will note fit TypeConfusion Vulns thou..
+
+ ---->
+*/
+
+
 #pragma once
 #pragma comment(lib, "Psapi.lib ")
 #pragma comment(lib, "Kernel32.lib")
