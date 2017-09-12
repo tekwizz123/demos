@@ -302,31 +302,31 @@ GetNtos(
 		PULONG ReturnLength
 	);
 
-	DWORD len;
-	PSYSTEM_MODULE_INFORMATION ModuleInfo;
+	DWORD l;
+	PSYSTEM_MODULE_INFORMATION Mi;
 	PVOID Nt = NULL;
 
 	// Dynamic import.
 	pfZwQuerySystemInformation ZwQuerySystemInformation = (pfZwQuerySystemInformation)GetProcAddress(
 		GetModuleHandle(L"ntdll.dll"), "ZwQuerySystemInformation");
-	ZwQuerySystemInformation(SystemModuleInformation, NULL, 0, &len);
+	ZwQuerySystemInformation(SystemModuleInformation, NULL, NULL, &l);
 
 	// Requere Medium integrity level ( > win7 ),
 	// if run from low il, then return NULL.
-	ModuleInfo = (PSYSTEM_MODULE_INFORMATION)VirtualAlloc(
+	Mi = (PSYSTEM_MODULE_INFORMATION)VirtualAlloc(
 		NULL,
-		len,
+		l,
 		MEM_COMMIT | MEM_RESERVE,
 		PAGE_READWRITE
 	);
 
-	if (!ModuleInfo){return NULL;}
+	if (!Mi){return NULL;}
 
-	ZwQuerySystemInformation(SystemModuleInformation, ModuleInfo, len, &len);
-	Nt = ModuleInfo->Module[0].ImageBase;
+	ZwQuerySystemInformation(SystemModuleInformation, Mi, l, &l);
+	Nt = Mi->Module[0].ImageBase;
 
 	// No longer needed, free the memory.
-	VirtualFree(ModuleInfo, 0, MEM_RELEASE);
+	VirtualFree(Mi, 0, MEM_RELEASE);
 	return (PUCHAR)Nt;
 }
 
