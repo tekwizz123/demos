@@ -238,8 +238,7 @@ fffff803`bfa1196e 5a              pop     rdx
 fffff803`bfa1196f 58              pop     rax
 fffff803`bfa11970 59              pop     rcx
 fffff803`bfa11971 c3              ret
-kd> !vertarget
-No export vertarget found
+
 kd> vertarget
 Windows 10 Kernel Version 16281 MP (1 procs) Free x64
 Product: WinNt, suite: TerminalServer SingleUserTS Personal
@@ -311,7 +310,7 @@ GetNtos(
 		GetModuleHandle(L"ntdll.dll"), "ZwQuerySystemInformation");
 	ZwQuerySystemInformation(SystemModuleInformation, NULL, NULL, &l);
 
-	// Requere Medium integrity level ( > win7 ),
+	// Medium integrity level ( > win7 ),
 	// if run from low il, then return NULL.
 	Mi = (PSYSTEM_MODULE_INFORMATION)VirtualAlloc(
 		NULL,
