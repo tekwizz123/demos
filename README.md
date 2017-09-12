@@ -5,10 +5,9 @@ Windows Kernel Exploitation.
 ShellCode: <html><a href="https://github.com/akayn/demos/blob/master/Win10/PayLoads/TokenStealingShellCode.asm">pl.asm</a></html><br>
 ROP Based SMEP Bypass including Gadgets & full debugging info: <html><a href="https://github.com/akayn/demos/blob/master/Win10/SmepByPassWin10x64build.16281Rs3/demo.cc">demo.cc</a></html><br>
 
+# Gagdets Summery:
+
 ```c
-//
-// Gagdets Summery:
-//
 
 /*
 ************* Symbol Path validation summary **************
