@@ -459,7 +459,8 @@ int main(
 
 	Buff = (CHAR *)malloc(len); 
 
-	// Fill The buffer with Nop's
+	// Fill The buffer with Nop's,
+	// cuz they dont get access violation.
 	RtlSecureZeroMemory(Buff, len);
 	RtlFillMemory(Buff, len, 0x90);
 
