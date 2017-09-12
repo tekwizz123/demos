@@ -21,7 +21,7 @@
 	& depands on your specific Exploit...
 	i can only guarantee Code Execution.
 	
-	This will note fit TypeConfusion Vulns thou..
+	This will note fit TypeConfusion Vuln thou..
 
  ---->
 */
