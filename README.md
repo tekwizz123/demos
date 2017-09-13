@@ -28,6 +28,9 @@ Re & exploits:<br>
 	...<br><br>
 
 # External Resources:
+* Memory-Management:<br>
+	[+] <html><a href="https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-088-introduction-to-c-memory-management-and-c-object-oriented-programming-january-iap-2010/lecture-notes/">MIT</a></html>.<br>
+
 * HEVD & Basics:<br>
 	[+] <html><a href="https://github.com/hacksysteam/HackSysExtremeVulnerableDriver">HackSysExtremeVulnerableDriver</a></html>.<br>
 	[+] <html><a href="http://www.fuzzysecurity.com/tutorials.html">B33F tuto</a></html>.<br>
