@@ -1,3 +1,80 @@
+
+/*
+
+NTSTATUS TriggerUninitializedStackVariable(IN PVOID UserBuffer) {
+    ULONG UserValue = 0;
+    ULONG MagicValue = 0xBAD0B0B0;
+    NTSTATUS Status = STATUS_SUCCESS;
+ 
+#ifdef SECURE
+    // Secure Note: This is secure because the developer is properly initializing
+    // UNINITIALIZED_STACK_VARIABLE to NULL and checks for NULL pointer before calling
+    // the callback
+    UNINITIALIZED_STACK_VARIABLE UninitializedStackVariable = {0};
+#else
+    // Vulnerability Note: This is a vanilla Uninitialized Stack Variable vulnerability
+    // because the developer is not initializing 'UNINITIALIZED_STACK_VARIABLE' structure
+    // before calling the callback when 'MagicValue' does not match 'UserValue'
+    UNINITIALIZED_STACK_VARIABLE UninitializedStackVariable;
+#endif
+ 
+    PAGED_CODE();
+ 
+    __try {
+        // Verify if the buffer resides in user mode
+        ProbeForRead(UserBuffer,
+                     sizeof(UNINITIALIZED_STACK_VARIABLE),
+                     (ULONG)__alignof(UNINITIALIZED_STACK_VARIABLE));
+ 
+        // Get the value from user mode
+        UserValue = *(PULONG)UserBuffer;
+ 
+        DbgPrint("[+] UserValue: 0x%p\n", UserValue);
+        DbgPrint("[+] UninitializedStackVariable Address: 0x%p\n", &UninitializedStackVariable);
+ 
+        // Validate the magic value
+        if (UserValue == MagicValue) {
+            UninitializedStackVariable.Value = UserValue;
+            UninitializedStackVariable.Callback = &UninitializedStackVariableObjectCallback;
+        }
+ 
+        DbgPrint("[+] UninitializedStackVariable.Value: 0x%p\n", UninitializedStackVariable.Value);
+        DbgPrint("[+] UninitializedStackVariable.Callback: 0x%p\n", UninitializedStackVariable.Callback);
+ 
+#ifndef SECURE
+        DbgPrint("[+] Triggering Uninitialized Stack Variable Vulnerability\n");
+#endif
+ 
+        // Call the callback function
+        if (UninitializedStackVariable.Callback) {
+            UninitializedStackVariable.Callback();
+        }
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        Status = GetExceptionCode();
+        DbgPrint("[-] Exception Code: 0x%X\n", Status);
+    }
+ 
+    return Status;
+}
+ 
+'''
+If we pass the driver function the correct magic value then it initializes
+the variable and callback parameters. If we pass an incorrect value then this does not happen.
+The problem here is that the variable is not set to a specific value when it is defined.
+As the variable resides on the stack it will contain whatever random junk is left behind by previous function calls.
+Notice that the code has a check (if UninitializedStackVariable.Callback...) which does nothing to protect it from a crash.
+'''
+B33F
+
+<-----------------
+To Put it simply The driver Calls a callback on an-uninitialized value, offering the attaker the
+chance to perform heap spay in order to facilitate that memory address with a pointer to our allocated shellcode.
+---------------->
+
+*/
+
+
 #include "stdafx.h"
 #include <Windows.h>
 #include <string.h>
