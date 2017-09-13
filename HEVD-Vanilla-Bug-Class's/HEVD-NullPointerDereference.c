@@ -83,10 +83,13 @@ NTSTATUS TriggerNullPointerDereference(IN PVOID UserBuffer) {
     return Status;
 }
  
+'''
 Ok, so we have a check on a magic value, if it succeeds we print the value and the callback function
 (this is normal execution flow). If the check fails we free the pool tag and null the pointer.
 Up to there there is no issue but then, in the vulnerable version, the driver simply calls the callback function without
 checking if it was previously nulled!
+'''
+B33F
 
 <-----------------
 To Put it simply the driver calls the callback
