@@ -1,6 +1,3 @@
-// HEVD-Uaf-Win7x86.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include <Windows.h>
 #include <stdio.h>
