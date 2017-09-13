@@ -1,10 +1,11 @@
 # Kernel SAGA
-Windows Kernel Exploitation.
-Static & dynamic analysis, exploits & vuln reasearch.
-Mitigations bypass's
+Windows Kernel Exploitation. <br>
+Static & dynamic analysis, exploits & vuln reasearch. <br>
+Mitigations bypass's <br>
 
 # Contents:
-
+HEVD-Vanilla-Bug-Class's:<br>
+Exploits & Vuln Note's in order to reproduce & reuse.<br>
 * <html><a href="https://github.com/akayn/demos/tree/master/HEVD-Vanilla-Bug-Class's">HEVD-Vanilla-Bug-Class's</a></html><br>
 	[+] <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/Compiled.zip?raw=true">Compiled-win7x86</a></html><br>
 	* <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-TypeConfX86Win7.c">Type Confusion</a></html>.<br>
