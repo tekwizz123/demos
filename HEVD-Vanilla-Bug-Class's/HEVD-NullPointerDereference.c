@@ -89,7 +89,6 @@ Ok, so we have a check on a magic value, if it succeeds we print the value and t
 Up to there there is no issue but then, in the vulnerable version, the driver simply calls the callback function without
 checking if it was previously nulled!
 '''
-B33F
 
 <-----------------
 To Put it simply the driver calls the callback
@@ -100,7 +99,6 @@ control over the kernel execution flow.
 */
 
 
-#include "stdafx.h"
 #include <Windows.h>
 #include <string.h>
 #include <stdio.h>
