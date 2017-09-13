@@ -35,6 +35,7 @@ FARPROC GetAddress(LPCSTR Sym)
 		SystemLookasideInformation = 45
 	} SYSTEM_INFORMATION_CLASS;
 
+	
 	typedef struct _SYSTEM_MODULE_INFORMATION_ENTRY {
 		HANDLE Section;
 		PVOID MappedBase;
