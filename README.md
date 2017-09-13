@@ -44,6 +44,7 @@ Re & exploits:<br>
 		* <html><a href="https://en.wikipedia.org/wiki/Control_register#CR4">wiki</a></html>.<br>
 		* <html><a href="http://j00ru.vexillium.org/?p=783">j00ru</a></html>.<br>
 		* <html><a href="https://github.com/n3k/EKOParty2015_Windows_SMEP_Bypass">Enrique Nissim & Nicolas Economou</a></html>.<br>
+		* <html><a href="https://www.coresecurity.com/blog/getting-physical-extreme-abuse-of-intel-based-paging-systems-part-3-windows-hals-heap">PTE-OverWrite</a></html>.<br>
 		* <html><a href="https://www.blackhat.com/presentations/bh-usa-08/Shacham/BH_US_08_Shacham_Return_Oriented_Programming.pdf">return oriented Programming</a></html>.<br>
 	[+] k-ASLR:<br>
 		* <html><a href="https://github.com/MortenSchenk/BHUSA2017">Morten Schenk</a></html>.<br>
