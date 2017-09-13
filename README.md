@@ -38,7 +38,7 @@ Re & exploits:<br>
 * HEVD & Basics:<br>
 	[+] <html><a href="https://github.com/hacksysteam/HackSysExtremeVulnerableDriver">HackSysExtremeVulnerableDriver</a></html>.<br>
 	[+] <html><a href="http://www.fuzzysecurity.com/tutorials.html">B33F tuto</a></html>.<br>
-		[>] Some of the Vuln Note's in the code were taken from there.
+			[^]            Some of the Vuln Note's in the code were taken from there. <br>
 	[+] <html><a href="https://blahcat.github.io/2017/08/14/a-primer-to-windows-x64-shellcoding/">ShellCoding & kd</a></html>.<br>
 * Mitigations:<br>
 	[+] SMEP:<br>
