@@ -1,3 +1,90 @@
+/*
+
+NTSTATUS TriggerPoolOverflow(IN PVOID UserBuffer, IN SIZE_T Size) {
+    PVOID KernelBuffer = NULL;
+    NTSTATUS Status = STATUS_SUCCESS;
+ 
+    PAGED_CODE();
+ 
+    __try {
+        DbgPrint("[+] Allocating Pool chunk\n");
+ 
+        // Allocate Pool chunk
+        KernelBuffer = ExAllocatePoolWithTag(NonPagedPool,
+                                             (SIZE_T)POOL_BUFFER_SIZE,
+                                             (ULONG)POOL_TAG);
+ 
+        if (!KernelBuffer) {
+            // Unable to allocate Pool chunk
+            DbgPrint("[-] Unable to allocate Pool chunk\n");
+ 
+            Status = STATUS_NO_MEMORY;
+            return Status;
+        }
+        else {
+            DbgPrint("[+] Pool Tag: %s\n", STRINGIFY(POOL_TAG));
+            DbgPrint("[+] Pool Type: %s\n", STRINGIFY(NonPagedPool));
+            DbgPrint("[+] Pool Size: 0x%X\n", (SIZE_T)POOL_BUFFER_SIZE);
+            DbgPrint("[+] Pool Chunk: 0x%p\n", KernelBuffer);
+        }
+ 
+        // Verify if the buffer resides in user mode
+        ProbeForRead(UserBuffer, (SIZE_T)POOL_BUFFER_SIZE, (ULONG)__alignof(UCHAR));
+ 
+        DbgPrint("[+] UserBuffer: 0x%p\n", UserBuffer);
+        DbgPrint("[+] UserBuffer Size: 0x%X\n", Size);
+        DbgPrint("[+] KernelBuffer: 0x%p\n", KernelBuffer);
+        DbgPrint("[+] KernelBuffer Size: 0x%X\n", (SIZE_T)POOL_BUFFER_SIZE);
+ 
+#ifdef SECURE
+        // Secure Note: This is secure because the developer is passing a size
+        // equal to size of the allocated Pool chunk to RtlCopyMemory()/memcpy().
+        // Hence, there will be no overflow
+        RtlCopyMemory(KernelBuffer, UserBuffer, (SIZE_T)BUFFER_SIZE);
+#else
+        DbgPrint("[+] Triggering Pool Overflow\n");
+ 
+        // Vulnerability Note: This is a vanilla Pool Based Overflow vulnerability
+        // because the developer is passing the user supplied value directly to
+        // RtlCopyMemory()/memcpy() without validating if the size is greater or
+        // equal to the size of the allocated Pool chunk
+        RtlCopyMemory(KernelBuffer, UserBuffer, Size);
+#endif
+ 
+        if (KernelBuffer) {
+            DbgPrint("[+] Freeing Pool chunk\n");
+            DbgPrint("[+] Pool Tag: %s\n", STRINGIFY(POOL_TAG));
+            DbgPrint("[+] Pool Chunk: 0x%p\n", KernelBuffer);
+ 
+            // Free the allocated Pool chunk
+            ExFreePoolWithTag(KernelBuffer, (ULONG)POOL_TAG);
+            KernelBuffer = NULL;
+        }
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        Status = GetExceptionCode();
+        DbgPrint("[-] Exception Code: 0x%X\n", Status);
+    }
+ 
+    return Status;
+}
+
+'''
+The driver allocates a pool chunk of size X and copies user supplied data into it,
+however, it does not check if the user supplied data is larger than the memory it has allocated.
+As a result, any extra data will overflow into the adjacent chunk on the non-paged pool.
+'''
+B33F
+
+<-----------------
+To Put it simply The driver lets us write arbitrary data to a paged pool, a kernel memory region,
+with a little memory manipulation we are able to free and allocate object from the paged pool triggering once again
+code execution.
+---------------->
+
+*/
+
+
 #include "windows.h"
 
 typedef NTSTATUS(__stdcall* pfNtAllocateVirtualMemory)(
