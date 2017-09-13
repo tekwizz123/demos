@@ -74,7 +74,6 @@ The driver allocates a pool chunk of size X and copies user supplied data into i
 however, it does not check if the user supplied data is larger than the memory it has allocated.
 As a result, any extra data will overflow into the adjacent chunk on the non-paged pool.
 '''
-B33F
 
 <-----------------
 To Put it simply The driver lets us write arbitrary data to a paged pool, a kernel memory region,
