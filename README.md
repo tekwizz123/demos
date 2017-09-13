@@ -22,6 +22,12 @@ kd & dev:<br>
 Mitigations Bypass:<br>
 * ROP Based SMEP Bypass including Gadgets & full debugging info: <html><a href="https://github.com/akayn/demos/blob/master/Win10/SmepByPassWin10x64build.16281Rs3/demo.cc">SmepBypassX64Win10RS3.c</a></html><br>
 
+# External Resources:
+* HEVD & Basics:<br>
+	[+] <html><a href="https://github.com/hacksysteam/HackSysExtremeVulnerableDriver">HackSysExtremeVulnerableDriver</a></html>.<br>
+	[+] <html><a href="http://www.fuzzysecurity.com/tutorials.html">B33F tuto</a></html>.<br>
+	[+] <html><a href="https://blahcat.github.io/2017/08/14/a-primer-to-windows-x64-shellcoding/">ShellCoding & kd</a></html>.<br>
+
 # SMEP bypass on Win10x64 RS3 16281
 ![](Win10/SmepByPassWin10x64build.16281Rs3/poc/QuickPoc.gif)
 # Gadgets Summery:
