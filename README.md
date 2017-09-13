@@ -40,8 +40,21 @@ Re & exploits:<br>
 		* <html><a href="https://www.blackhat.com/presentations/bh-usa-08/Shacham/BH_US_08_Shacham_Return_Oriented_Programming.pdf">return oriented Programming</a></html><br>.
 	[+] k-ASLR:<br>
 		* <html><a href="https://github.com/MortenSchenk/BHUSA2017">Morten Schenk</a></html>.<br>
-		
+	[+] ReadWrite Primitives;
+		* <html><a href="https://sensepost.com/blog/2017/abusing-gdi-objects-for-ring0-primitives-revolution/">abusing gdi objects</a></html>.<br>
 
+Tools:<br>
+* <html><a href="https://github.com/CoreSecurity/Agafi">gadget finder.</a></html>.<br>
+* <html><a href="https://github.com/fishstiqz/poolinfo">kernel pool windbg extension.</a></html>.<br>
+* <html><a href="https://github.com/Rootkitsmm/Win32k-Fuzzer">win32k fuzzer</a></html>.<br>
+* <html><a href="http://www.iceswordlab.com/2017/06/14/Automatically-Discovering-Windows-Kernel-Information-Leak-Vulnerabilities_en/">digtool fuzzer</a></html>.<br>
+
+Software:<br>
+* <html><a href="https://developer.microsoft.com/en-us/windows/hardware/windows-driver-kit">kd</a></html>.<br>
+* <html><a href="https://developer.microsoft.com/en-us/windows/hardware/download-symbols">Symbols</a></html>.<br>
+* <html><a href="https://www.hex-rays.com/products/ida/">Ida</a></html>.<br>
+
+		
 # SMEP bypass on Win10x64 RS3 16281
 ![](Win10/SmepByPassWin10x64build.16281Rs3/poc/QuickPoc.gif)
 # Gadgets Summery:
