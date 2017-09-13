@@ -24,8 +24,8 @@ Mitigations Bypass:<br>
 
 Re & exploits:<br>
 * CVE's:
-	[+] ...
-	...
+	[+] ...<br>
+	...<br><br>
 
 # External Resources:
 * HEVD & Basics:<br>
