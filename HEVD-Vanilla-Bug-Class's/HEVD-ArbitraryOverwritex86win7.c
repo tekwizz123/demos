@@ -1,4 +1,69 @@
-#include "stdafx.h"
+
+/*
+NTSTATUS TriggerArbitraryOverwrite(IN PWRITE_WHAT_WHERE UserWriteWhatWhere) {
+    NTSTATUS Status = STATUS_SUCCESS;
+ 
+    PAGED_CODE();
+ 
+    __try {
+        // Verify if the buffer resides in user mode
+        ProbeForRead((PVOID)UserWriteWhatWhere,
+                     sizeof(WRITE_WHAT_WHERE),
+                     (ULONG)__alignof(WRITE_WHAT_WHERE));
+ 
+        DbgPrint("[+] UserWriteWhatWhere: 0x%p\n", UserWriteWhatWhere);
+        DbgPrint("[+] WRITE_WHAT_WHERE Size: 0x%X\n", sizeof(WRITE_WHAT_WHERE));
+        DbgPrint("[+] UserWriteWhatWhere->What: 0x%p\n", UserWriteWhatWhere->What);
+        DbgPrint("[+] UserWriteWhatWhere->Where: 0x%p\n", UserWriteWhatWhere->Where);
+ 
+#ifdef SECURE
+        // Secure Note: This is secure because the developer is properly validating if address
+        // pointed by 'Where' and 'What' value resides in User mode by calling ProbeForRead()
+        // routine before performing the write operation
+        ProbeForRead((PVOID)UserWriteWhatWhere->Where,
+                     sizeof(PULONG),
+                     (ULONG)__alignof(PULONG));
+        ProbeForRead((PVOID)UserWriteWhatWhere->What,
+                     sizeof(PULONG),
+                     (ULONG)__alignof(PULONG));
+ 
+        *(UserWriteWhatWhere->Where) = *(UserWriteWhatWhere->What);
+#else
+        DbgPrint("[+] Triggering Arbitrary Overwrite\n");
+ 
+        // Vulnerability Note: This is a vanilla Arbitrary Memory Overwrite vulnerability
+        // because the developer is writing the value pointed by 'What' to memory location
+        // pointed by 'Where' without properly validating if the values pointed by 'Where'
+        // and 'What' resides in User mode
+        *(UserWriteWhatWhere->Where) = *(UserWriteWhatWhere->What);
+#endif
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        Status = GetExceptionCode();
+        DbgPrint("[-] Exception Code: 0x%X\n", Status);
+    }
+ 
+    return Status;
+}
+
+'''
+The driver takes two pointers, one shows what the driver
+will write to memory and one which provides the location
+where the driver will write. Again, great job on showing
+the vulnerability and what would have been the secure implementation.
+The issue here is that the driver does not validate that the location
+of the destination pointer is in userland,
+because of this we can overwrite an arbitrary Kernel address (4-bytes) with and arbitrary value (4-bytes).
+'''
+
+<-----------------
+To Put it simply The driver lets has write arbitrary data to an arbitrary location.
+(of limited size), to exploit (on win-7) we overwrite a kernel pointer inside HalDispatchTable, to call
+NtQueryIntervalProfile in order to get code execution.
+---------------->
+	
+*/
+
 #include <Windows.h>
 #include <string.h>
 #include <stdio.h>
