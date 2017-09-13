@@ -1,4 +1,61 @@
-#include "stdafx.h"
+
+/*
+
+NTSTATUS FreeUaFObject() {
+    NTSTATUS Status = STATUS_UNSUCCESSFUL;
+ 
+    PAGED_CODE();
+ 
+    __try {
+        if (g_UseAfterFreeObject) {
+            DbgPrint("[+] Freeing UaF Object\n");
+            DbgPrint("[+] Pool Tag: %s\n", STRINGIFY(POOL_TAG));
+            DbgPrint("[+] Pool Chunk: 0x%p\n", g_UseAfterFreeObject);
+ 
+#ifdef SECURE
+            // Secure Note: This is secure because the developer is setting
+            // 'g_UseAfterFreeObject' to NULL once the Pool chunk is being freed
+            ExFreePoolWithTag((PVOID)g_UseAfterFreeObject, (ULONG)POOL_TAG);
+ 
+            g_UseAfterFreeObject = NULL;
+#else
+            // Vulnerability Note: This is a vanilla Use After Free vulnerability
+            // because the developer is not setting 'g_UseAfterFreeObject' to NULL.
+            // Hence, g_UseAfterFreeObject still holds the reference to stale pointer
+            // (dangling pointer)
+            ExFreePoolWithTag((PVOID)g_UseAfterFreeObject, (ULONG)POOL_TAG);
+#endif
+ 
+            Status = STATUS_SUCCESS;
+        }
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        Status = GetExceptionCode();
+        DbgPrint("[-] Exception Code: 0x%X\n", Status);
+    }
+ 
+    return Status;
+}
+
+'''
+Fairly straight forward, this frees the pool chunk by referencing the tag value.
+This is the function that contains the vulnerability in that "g_UseAfterFreeObject"
+is not set to null after the object is freed and so retains a stale object pointer.
+'''
+
+B33F
+
+<-----------------
+To Put it simply The driver lets us initialize a kernel object with a pointer that is later freed 
+(that means we can change the content of that memory location) and then we can call a callback on that freed memory (use it)
+with a little extra memory manipulation we can replace the content in that address to a pointer to our shell code again leading to
+code execution.
+---------------->
+
+
+*/
+
+
 #include <Windows.h>
 #include <stdio.h>
 #include <winioctl.h>
