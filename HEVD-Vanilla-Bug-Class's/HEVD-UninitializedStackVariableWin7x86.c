@@ -65,7 +65,6 @@ The problem here is that the variable is not set to a specific value when it is 
 As the variable resides on the stack it will contain whatever random junk is left behind by previous function calls.
 Notice that the code has a check (if UninitializedStackVariable.Callback...) which does nothing to protect it from a crash.
 '''
-B33F
 
 <-----------------
 To Put it simply The driver Calls a callback on an-uninitialized value, offering the attaker the
