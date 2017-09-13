@@ -23,8 +23,8 @@ Mitigations Bypass:<br>
 * ROP Based SMEP Bypass including Gadgets & full debugging info: <html><a href="https://github.com/akayn/demos/blob/master/Win10/SmepByPassWin10x64build.16281Rs3/demo.cc">SmepBypassX64Win10RS3.c</a></html><br>
 
 Re & exploits:<br>
-* CVE's:
-	[+] ...<br>
+* CVE's:<br>
+	[+] TODO<br>...<br>
 	...<br><br>
 
 # External Resources:
