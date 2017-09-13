@@ -74,8 +74,6 @@ chance to perform heap spay in order to facilitate that memory address with a po
 
 */
 
-
-#include "stdafx.h"
 #include <Windows.h>
 #include <string.h>
 #include <stdio.h>
