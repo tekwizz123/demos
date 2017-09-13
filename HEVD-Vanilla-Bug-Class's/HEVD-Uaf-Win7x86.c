@@ -43,8 +43,6 @@ This is the function that contains the vulnerability in that "g_UseAfterFreeObje
 is not set to null after the object is freed and so retains a stale object pointer.
 '''
 
-B33F
-
 <-----------------
 To Put it simply The driver lets us initialize a kernel object with a pointer that is later freed 
 (that means we can change the content of that memory location) and then we can call a callback on that freed memory (use it)
