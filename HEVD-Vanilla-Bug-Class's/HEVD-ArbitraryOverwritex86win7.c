@@ -55,6 +55,7 @@ The issue here is that the driver does not validate that the location
 of the destination pointer is in userland,
 because of this we can overwrite an arbitrary Kernel address (4-bytes) with and arbitrary value (4-bytes).
 '''
+B33F
 
 <-----------------
 To Put it simply The driver lets us write arbitrary data to an arbitrary location.
