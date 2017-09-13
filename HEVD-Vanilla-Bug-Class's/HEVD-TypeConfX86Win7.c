@@ -1,4 +1,93 @@
-#include "stdafx.h"
+
+/*
+
+NTSTATUS TriggerTypeConfusion(IN PUSER_TYPE_CONFUSION_OBJECT UserTypeConfusionObject) {
+    NTSTATUS Status = STATUS_UNSUCCESSFUL;
+    PKERNEL_TYPE_CONFUSION_OBJECT KernelTypeConfusionObject = NULL;
+
+    PAGED_CODE();
+
+    __try {
+        // Verify if the buffer resides in user mode
+        ProbeForRead(UserTypeConfusionObject,
+                     sizeof(USER_TYPE_CONFUSION_OBJECT),
+                     (ULONG)__alignof(USER_TYPE_CONFUSION_OBJECT));
+
+        // Allocate Pool chunk
+        KernelTypeConfusionObject = (PKERNEL_TYPE_CONFUSION_OBJECT)
+                                     ExAllocatePoolWithTag(NonPagedPool,
+                                                           sizeof(KERNEL_TYPE_CONFUSION_OBJECT),
+                                                           (ULONG)POOL_TAG);
+
+        if (!KernelTypeConfusionObject) {
+            // Unable to allocate Pool chunk
+            DbgPrint("[-] Unable to allocate Pool chunk\n");
+
+            Status = STATUS_NO_MEMORY;
+            return Status;
+        }
+        else {
+            DbgPrint("[+] Pool Tag: %s\n", STRINGIFY(POOL_TAG));
+            DbgPrint("[+] Pool Type: %s\n", STRINGIFY(NonPagedPool));
+            DbgPrint("[+] Pool Size: 0x%X\n", sizeof(KERNEL_TYPE_CONFUSION_OBJECT));
+            DbgPrint("[+] Pool Chunk: 0x%p\n", KernelTypeConfusionObject);
+        }
+
+        DbgPrint("[+] UserTypeConfusionObject: 0x%p\n", UserTypeConfusionObject);
+        DbgPrint("[+] KernelTypeConfusionObject: 0x%p\n", KernelTypeConfusionObject);
+        DbgPrint("[+] KernelTypeConfusionObject Size: 0x%X\n", sizeof(KERNEL_TYPE_CONFUSION_OBJECT));
+
+        KernelTypeConfusionObject->ObjectID = UserTypeConfusionObject->ObjectID;
+        KernelTypeConfusionObject->ObjectType = UserTypeConfusionObject->ObjectType;
+
+        DbgPrint("[+] KernelTypeConfusionObject->ObjectID: 0x%p\n", KernelTypeConfusionObject->ObjectID);
+        DbgPrint("[+] KernelTypeConfusionObject->ObjectType: 0x%p\n", KernelTypeConfusionObject->ObjectType);
+
+
+#ifdef SECURE
+        // Secure Note: This is secure because the developer is properly setting 'Callback'
+        // member of the 'KERNEL_TYPE_CONFUSION_OBJECT' structure before passing the pointer
+        // of 'KernelTypeConfusionObject' to 'TypeConfusionObjectInitializer()' function as
+        // parameter
+        KernelTypeConfusionObject->Callback = &TypeConfusionObjectCallback;
+        Status = TypeConfusionObjectInitializer(KernelTypeConfusionObject);
+#else
+        DbgPrint("[+] Triggering Type Confusion\n");
+
+        // Vulnerability Note: This is a vanilla Type Confusion vulnerability due to improper
+        // use of the 'UNION' construct. The developer has not set the 'Callback' member of
+        // the 'KERNEL_TYPE_CONFUSION_OBJECT' structure before passing the pointer of
+        // 'KernelTypeConfusionObject' to 'TypeConfusionObjectInitializer()' function as
+        // parameter
+        Status = TypeConfusionObjectInitializer(KernelTypeConfusionObject);
+#endif
+
+        DbgPrint("[+] Freeing KernelTypeConfusionObject Object\n");
+        DbgPrint("[+] Pool Tag: %s\n", STRINGIFY(POOL_TAG));
+        DbgPrint("[+] Pool Chunk: 0x%p\n", KernelTypeConfusionObject);
+
+        // Free the allocated Pool chunk
+        ExFreePoolWithTag((PVOID)KernelTypeConfusionObject, (ULONG)POOL_TAG);
+        KernelTypeConfusionObject = NULL;
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        Status = GetExceptionCode();
+        DbgPrint("[-] Exception Code: 0x%X\n", Status);
+    }
+
+    return Status;
+}
+
+
+<-----------------
+To Put it simply the driver Costruct a kernel object and calls the init function with a pointer (part of the object struct)
+then the init in turn calls the pointer provided without verification, we pass a pointer to our shell code to trigger
+code execution.
+---------------->
+
+*/
+
+
 #include <Windows.h>
 #include <stdio.h>
 #include <winioctl.h>
