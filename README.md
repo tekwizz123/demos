@@ -27,6 +27,15 @@ Mitigations Bypass:<br>
 	[+] <html><a href="https://github.com/hacksysteam/HackSysExtremeVulnerableDriver">HackSysExtremeVulnerableDriver</a></html>.<br>
 	[+] <html><a href="http://www.fuzzysecurity.com/tutorials.html">B33F tuto</a></html>.<br>
 	[+] <html><a href="https://blahcat.github.io/2017/08/14/a-primer-to-windows-x64-shellcoding/">ShellCoding & kd</a></html>.<br>
+* Mitigations:<br>
+	[+] SMEP:<br>
+		* <html><a href="https://en.wikipedia.org/wiki/Control_register#CR4">wiki</a></html>.<br>
+		* <html><a href="http://j00ru.vexillium.org/?p=783">j00ru</a></html><br>.
+		* <html><a href="https://github.com/n3k/EKOParty2015_Windows_SMEP_Bypass">Enrique Nissim & Nicolas Economou</a></html><br>.
+		* <html><a href="https://www.blackhat.com/presentations/bh-usa-08/Shacham/BH_US_08_Shacham_Return_Oriented_Programming.pdf">return oriented Programming</a></html><br>.
+	[+] k-ASLR:<br>
+		* <html><a href="https://github.com/MortenSchenk/BHUSA2017">Morten Schenk</a></html>.<br>
+		
 
 # SMEP bypass on Win10x64 RS3 16281
 ![](Win10/SmepByPassWin10x64build.16281Rs3/poc/QuickPoc.gif)
