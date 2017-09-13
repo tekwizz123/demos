@@ -1,5 +1,7 @@
-# demos
+# Kernel SAGA
 Windows Kernel Exploitation.
+Static & dynamic analysis, exploits & vuln reasearch.
+Mitigations bypass's
 
 # Contents:
 ShellCode: <html><a href="https://github.com/akayn/demos/blob/master/Win10/PayLoads/TokenStealingShellCode.asm">pl.asm</a></html><br>
