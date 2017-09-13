@@ -30,6 +30,10 @@ Re & exploits:<br>
 # External Resources:
 * Memory-Management:<br>
 	[+] <html><a href="https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-088-introduction-to-c-memory-management-and-c-object-oriented-programming-january-iap-2010/lecture-notes/">MIT</a></html>.<br>
+* C programming:<br>
+	[+] <html><a href="https://github.com/jamesroutley/write-a-hash-table">HASH TABLE</a></html>.<br>
+* asseambly:<br>
+	[+] <html><a href="https://www-s.acm.illinois.edu/sigwin/old/workshops/winasmtut.pdf">TUT</a></html>.<br>
 
 * HEVD & Basics:<br>
 	[+] <html><a href="https://github.com/hacksysteam/HackSysExtremeVulnerableDriver">HackSysExtremeVulnerableDriver</a></html>.<br>
@@ -56,6 +60,8 @@ Software:<br>
 * <html><a href="https://developer.microsoft.com/en-us/windows/hardware/windows-driver-kit">kd</a></html>.<br>
 * <html><a href="https://developer.microsoft.com/en-us/windows/hardware/download-symbols">Symbols</a></html>.<br>
 * <html><a href="https://www.hex-rays.com/products/ida/">Ida</a></html>.<br>
+* <html><a href="http://www.nasm.us/">NASM</a></html>.<br>
+* <html><a href="https://mh-nexus.de/en/hxd/">Hxd</a></html>.<br>
 
 # Proof Of Concept:
 		
