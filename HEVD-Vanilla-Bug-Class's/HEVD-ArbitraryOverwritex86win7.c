@@ -57,7 +57,7 @@ because of this we can overwrite an arbitrary Kernel address (4-bytes) with and 
 '''
 
 <-----------------
-To Put it simply The driver lets has write arbitrary data to an arbitrary location.
+To Put it simply The driver lets us write arbitrary data to an arbitrary location.
 (of limited size), to exploit (on win-7) we overwrite a kernel pointer inside HalDispatchTable, to call
 NtQueryIntervalProfile in order to get code execution.
 ---------------->
