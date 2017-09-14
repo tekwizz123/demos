@@ -20,8 +20,6 @@
 	NOTE: Recovery from the ShellCode is up to you 
 	& depands on your specific Exploit...
 	i can only guarantee Code Execution.
-	
-	This will not fit a TypeConfusion Vuln thou..
 
  ---->
 */
