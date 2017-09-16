@@ -154,11 +154,11 @@ GetPsInitialSystemProcess(
 	) 
 {
 	PUCHAR NtBaddr = (PUCHAR)GetNtos();
-	printf("ntoskrnl Base Addr: %p\n", NtBaddr);
+	//printf("ntoskrnl Base Addr: %p\n", NtBaddr);
 	PUCHAR ntos = (PUCHAR)LoadLibrary(L"ntoskrnl.exe");
 	PUCHAR addr = (PUCHAR)GetProcAddress((HMODULE)ntos, "PsInitialSystemProcess");
 	auto Psi = addr - ntos + NtBaddr;
-	printf("PsInitialSystemProcess: %p\n", Psi);
+	//printf("PsInitialSystemProcess: %p\n", Psi);
 	return (DWORD64)Psi;
 }
 
