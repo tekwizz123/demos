@@ -324,8 +324,8 @@ DWORD64 BitmapWrite(
 	)
 {
 	//printf("OverWriting addr at: %llx with : %llx\n", addr, Val);
-	SetBitmapBits(Mgr, 0x8, *reinterpret_cast<LPVOID *>(addr)); //(void *)()
-	if (SetBitmapBits(Wrk, 0x8, *reinterpret_cast<LPVOID *>(Val)) == NULL) { //(void *)(&Val)
+	SetBitmapBits(Mgr, 0x8, *reinterpret_cast<LPVOID *>(addr)); 
+	if (SetBitmapBits(Wrk, 0x8, *reinterpret_cast<LPVOID *>(Val)) == NULL) { 
 		exit(GetLastError());
 	}
 }
