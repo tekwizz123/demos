@@ -1,5 +1,4 @@
-# Kernel SAGA
-Windows Kernel Exploitation. <br>
+# Windows Kernel Exploitation.
 Static & dynamic analysis, exploits & vuln reasearch. <br>
 Mitigations bypass's <br>
 
