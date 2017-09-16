@@ -1,5 +1,4 @@
 
-#include "stdafx.h"
 #include <Windows.h>
 #include <stdio.h>
 #include <cstdint>
@@ -16,28 +15,6 @@ typedef void*(NTAPI *lHMValidateHandle)(
 
 HBITMAP ManagerBitmap;
 HBITMAP WorkerBitmap;
-
-
-/*
-typedef struct _HEAD
-{
-	HANDLE h;
-	DWORD  cLockObj;
-} HEAD, *PHEAD;
-
-typedef struct _THROBJHEAD
-{
-	HEAD h;
-	PVOID pti;
-} THROBJHEAD, *PTHROBJHEAD;
-
-typedef struct _THRDESKHEAD
-{
-	THROBJHEAD h;
-	PVOID    rpdesk;
-	PVOID       pSelf;   
-} THRDESKHEAD, *PTHRDESKHEAD;
-*/
 
 LRESULT 
 CALLBACK MainWProc(
