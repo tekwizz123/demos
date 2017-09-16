@@ -296,7 +296,8 @@ AllocFreeObjects(
 }
 
 
-DWORD64 BitmapRead(
+DWORD64 
+BitmapRead(
 	__in HBITMAP Mgr,
 	__in HBITMAP Wrk,
 	__in DWORD64 addr
@@ -316,7 +317,8 @@ DWORD64 BitmapRead(
 	return *reinterpret_cast<DWORD64 *>(bRet);
 }
 
-DWORD64 BitmapWrite(
+DWORD64 
+BitmapWrite(
 	__in HBITMAP Mgr,
 	__in HBITMAP Wrk,
 	__in DWORD64 addr,
@@ -328,6 +330,7 @@ DWORD64 BitmapWrite(
 	if (SetBitmapBits(Wrk, 0x8, *reinterpret_cast<LPVOID *>(Val)) == NULL) { 
 		exit(GetLastError());
 	}
+	return(0);
 }
 
 int
