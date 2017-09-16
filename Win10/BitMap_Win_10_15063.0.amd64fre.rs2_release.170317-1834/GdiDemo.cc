@@ -2,7 +2,6 @@
 /*
  <---- 
  
- 	it needs ntoskrnl base address or alternatively a kernel pointer leak.
 	Copy & usage of this software are allowed without any restrictions.
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
