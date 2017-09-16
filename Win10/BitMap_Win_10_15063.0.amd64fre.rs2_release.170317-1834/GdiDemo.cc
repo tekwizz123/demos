@@ -189,7 +189,7 @@ RegisterCls(
 	}
 	HINSTANCE hInst = GetModuleHandleA(NULL);
 	auto hCls = RegisterClassExW(&wnd);
-	hWnd = CreateWindowExW(0, classNumber, L"akayn", 0xcf0000, 0, 0, 300, 300, 0, 0, hInst, 0);
+	hWnd = CreateWindowExW(0, classNumber, L"aaa", 0xcf0000, 0, 0, 300, 300, 0, 0, hInst, 0);
 
 	uintptr_t uWND = (uintptr_t)pHmValidateHandle(hWnd, 1);
 
