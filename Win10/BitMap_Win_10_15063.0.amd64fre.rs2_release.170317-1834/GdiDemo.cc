@@ -1,6 +1,15 @@
 
 /*
- <---- 
+	leak lpszMenuName using HMValidateHandle, that is allocated on the same pool region
+	as the bitmap object, in order to later use in an arbitrary overwrite bug.
+	using SeBitmapBits & GetBitmapBits as w/r op.
+	Ref:
+	https://github.com/FuzzySecurity/HackSysTeam-PSKernelPwn/blob/master/Kernel_RS2_WWW_GDI_64.ps1
+	https://github.com/sam-b/windows_kernel_address_leaks/blob/master/HMValidateHandle/HMValidateHandle/HMValidateHandle.cpp
+	Win32k Dark Composition: Attacking the Shadow part of Graphic subsystem <= 360Vulcan
+	LPE vulnerabilities exploitation on Windows 10 Anniversary Update <= Drozdov Yurii & Drozdova Liudmila
+	
+<---- 
  
 	Copy & usage of this software are allowed without any restrictions.
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -9,9 +18,8 @@
 	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	SOFTWARE. 
+	SOFTWARE.
 	
-	NOTE: UnStable 
  ---->
 */
 
