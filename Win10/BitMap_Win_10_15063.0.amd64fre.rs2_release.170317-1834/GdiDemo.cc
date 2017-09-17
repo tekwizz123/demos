@@ -286,6 +286,7 @@ BitmapWrite(
 		printf("error setting bits");
 		exit(GetLastError());
 	}
+	return(0);
 }
 
 int
