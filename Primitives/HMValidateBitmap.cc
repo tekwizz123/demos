@@ -1,7 +1,7 @@
 
 /*
 
-	leak lpszMenuName, that is allocated on the same pool region
+	leak lpszMenuName using HMValidateHandle, that is allocated on the same pool region
 	as the bitmap object, in order to later use in an arbitrary overwrite bug.
 
 	Ref:
