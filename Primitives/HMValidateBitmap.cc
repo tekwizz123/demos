@@ -57,7 +57,7 @@ CALLBACK MainWProc(
 
 lHMValidateHandle pHmValidateHandle = NULL;
 
-
+//https://github.com/sam-b/windows_kernel_address_leaks/blob/master/HMValidateHandle/HMValidateHandle/HMValidateHandle.cpp
 BOOL
 GetHMValidateHandle(
 )
