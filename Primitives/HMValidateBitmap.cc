@@ -242,7 +242,7 @@ Leak(
 	)
 {
 	//if (y == 0) {
-		SprayPool();
+	//	SprayPool();
 	//}
 	
 	DWORD64 Curr, Prev = NULL;
