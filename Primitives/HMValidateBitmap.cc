@@ -28,7 +28,6 @@
 
 
 #pragma once
-#include "stdafx.h"
 #include <Windows.h>
 #include <stdio.h>
 #include <cstdint>
