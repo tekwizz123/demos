@@ -5,6 +5,10 @@
  
  	this very simplified rop chain will get you code execution on the latest win build
  	and intel firmware dispite Mitigations.
+	
+	i think is best to recompile the asseambly & See that Rip gets populated by nt!IofCallDriver+0x59,
+	address and not to expect the nops to slide you to that addr.
+	
  
  	it needs ntoskrnl base address or alternatively a kernel pointer leak.
 	Copy & usage of this software are allowed without any restrictions.
