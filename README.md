@@ -78,7 +78,7 @@ many tnx to all the great ppl b4 me that did much work already!<br>
 
 * <html><a href="https://github.com/FuzzySecurity">b33f</a></html>.<br>
 * <html><a href="https://github.com/cn33liz">cn33liz</a></html>.<br>
-* <html><a href="https://github.com/tekwizz123">b33f</a></html>.<br>
+* <html><a href="https://github.com/tekwizz123">tekwizz123</a></html>.<br>
 * <html><a href="https://github.com/GradiusX">GradiusX</a></html>.<br>
 * <html><a href="https://github.com/sam-b">sam-b</a></html>.<br>
 & all others...
