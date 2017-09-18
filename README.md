@@ -57,6 +57,8 @@ Tools:<br>
 * <html><a href="https://github.com/CoreSecurity/Agafi">gadget finder</a></html>.<br>
 * <html><a href="https://github.com/akayn/GDIObjDump">gdi-dump windbg extension</a></html>.<br>
 * <html><a href="http://www.iceswordlab.com/2017/06/14/Automatically-Discovering-Windows-Kernel-Information-Leak-Vulnerabilities_en/">digtool fuzzer</a></html>.<br>
+* <html><a href="https://github.com/akayn/winafl">winafl</a></html>.<br>
+
 
 Software:<br>
 * <html><a href="https://developer.microsoft.com/en-us/windows/hardware/windows-driver-kit">kd</a></html>.<br>
