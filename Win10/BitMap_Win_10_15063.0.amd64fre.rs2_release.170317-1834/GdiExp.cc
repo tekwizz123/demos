@@ -245,7 +245,7 @@ BitmapRead(
 )
 {
 
-	printf("reading addr at: %p\n", addr);
+	//printf("reading addr at: %p\n", addr);
 	LPVOID bRet = VirtualAlloc(
 		0, sizeof(addr),
 		MEM_COMMIT | MEM_RESERVE,
@@ -253,12 +253,12 @@ BitmapRead(
 	);
 	auto m = SetBitmapBits(Mgr, sizeof(addr), (LPVOID *)&addr);
 	if (m == 0) {
-		printf("error setting bits!");
+		//printf("error setting bits!");
 		exit(GetLastError());
 	}
 
 	if (GetBitmapBits(Wrk, sizeof(bRet), bRet) == NULL) {
-		printf("err");
+		//printf("err");
 		exit(GetLastError());
 	}
 	auto retV = *((DWORD64 *)bRet);
