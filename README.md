@@ -76,6 +76,7 @@ Software:<br>
 # Credits
 many tnx to all the great ppl b4 me that did much work already!<br>
 
+* <html><a href="https://github.com/hacksysteam">HackSys Team</a></html>.<br>
 * <html><a href="https://github.com/FuzzySecurity">b33f</a></html>.<br>
 * <html><a href="https://github.com/cn33liz">cn33liz</a></html>.<br>
 * <html><a href="https://github.com/tekwizz123">tekwizz123</a></html>.<br>
