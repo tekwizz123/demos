@@ -64,3 +64,7 @@ Software:<br>
 * <html><a href="https://www.hex-rays.com/products/ida/">Ida</a></html>.<br>
 * <html><a href="http://www.nasm.us/">NASM</a></html>.<br>
 * <html><a href="https://mh-nexus.de/en/hxd/">Hxd</a></html>.<br>
+
+# See Also:
+* <html><a href="https://github.com/akayn/demos/tree/master/Win10/SmepByPassWin10x64build.16281Rs3">Smep PoC</a></html>.<br>
+* <html><a href="https://github.com/akayn/demos/tree/master/Win10/BitMap_Win_10_15063.0.amd64fre.rs2_release.170317-1834">GdiExp</a></html>.<br>
