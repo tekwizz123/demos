@@ -1,7 +1,7 @@
 # Proof Of Concept:
 		
 # SMEP bypass on Win10x64 RS3 16281
-![](Win10/SmepByPassWin10x64build.16281Rs3/poc/QuickPoc.gif)
+![](poc/QuickPoc.gif)
 # Gadgets Summery:
 
 ```c
