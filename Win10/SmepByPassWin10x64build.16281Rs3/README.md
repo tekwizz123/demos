@@ -169,4 +169,4 @@ Evaluate expression: 4409907 = 00000000`00434a33 <<-- offset..
 	LPVOID deviceCallBack = (LPVOID)(Ntos + 0x22b49);
 
 ```
-![](Win10/SmepByPassWin10x64build.16281Rs3/poc/SMEPBypass.PNG)
+![](poc/SMEPBypass.PNG)
