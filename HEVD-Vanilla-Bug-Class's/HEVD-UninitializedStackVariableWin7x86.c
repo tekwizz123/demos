@@ -1,6 +1,7 @@
 
 /*
 
+
 NTSTATUS TriggerUninitializedStackVariable(IN PVOID UserBuffer) {
     ULONG UserValue = 0;
     ULONG MagicValue = 0xBAD0B0B0;
