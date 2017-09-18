@@ -39,8 +39,6 @@ typedef void*(NTAPI *lHMValidateHandle)(
 	int type
 );
 
-int g = 1;
-
 typedef struct _hBmp {
 	HBITMAP hBmp;
 	DWORD64 kAddr;
