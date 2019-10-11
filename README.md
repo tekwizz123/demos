@@ -1,4 +1,4 @@
-# Windows Kernel Exploitation.
+# Windows Kernel Exploitation. All credits go to @akayn on Github. This repo is just a preserved version of his repository before it was deleted.
 Static & dynamic analysis, exploits & vuln reasearch. <br>
 Mitigations bypass's <br>
 
