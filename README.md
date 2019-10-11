@@ -1,4 +1,6 @@
-# Windows Kernel Exploitation. All credits go to akayn on Github. This repo is just a preserved version of his repository before it was deleted.
+# All credits go to akayn on Github. This repo is just a preserved version of his repository before it was deleted.
+
+# Windows Kernel Exploitation.
 Static & dynamic analysis, exploits & vuln reasearch. <br>
 Mitigations bypass's <br>
 
