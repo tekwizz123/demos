@@ -7,23 +7,23 @@ Mitigations bypass's <br>
 # Contents:
 HEVD-Vanilla-Bug-Class's:<br>
 Exploits & Vuln Note's in order to reproduce & reuse.<br>
-* <html><a href="https://github.com/akayn/demos/tree/master/HEVD-Vanilla-Bug-Class's">HEVD-Vanilla-Bug-Class's</a></html><br>
-	[+] <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/Compiled.zip?raw=true">Compiled-win7x86</a></html><br>
-	* <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-TypeConfX86Win7.c">Type Confusion</a></html>.<br>
-	* <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-ArbitraryOverwritex86win7.c">Arbitrary Overwrite</a></html>.<br>
-	* <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-NullPointerDereference.c">Null Pointer Dereference</a></html>.<br>
-	* <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-PoolOverFlow-Win7-x86.c">Pool OverFlow</a></html>.<br>
-	* <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-StackOverFlowx86Win7.c">Stack OverFlow</a></html>.<br>
-	* <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-Uaf-Win7x86.c">Use After Free</a></html>.<br>
-	* <html><a href="https://github.com/akayn/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-UninitializedStackVariableWin7x86.c">Uninitialized Stack Variable</a></html>.<br>
+* <html><a href="https://github.com/tekwizz123/demos/tree/master/HEVD-Vanilla-Bug-Class's">HEVD-Vanilla-Bug-Class's</a></html><br>
+	[+] <html><a href="https://github.com/tekwizz123/demos/blob/master/HEVD-Vanilla-Bug-Class's/Compiled.zip?raw=true">Compiled-win7x86</a></html><br>
+	* <html><a href="https://github.com/tekwizz123/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-TypeConfX86Win7.c">Type Confusion</a></html>.<br>
+	* <html><a href="https://github.com/tekwizz123/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-ArbitraryOverwritex86win7.c">Arbitrary Overwrite</a></html>.<br>
+	* <html><a href="https://github.com/tekwizz123/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-NullPointerDereference.c">Null Pointer Dereference</a></html>.<br>
+	* <html><a href="https://github.com/tekwizz123/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-PoolOverFlow-Win7-x86.c">Pool OverFlow</a></html>.<br>
+	* <html><a href="https://github.com/tekwizz123/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-StackOverFlowx86Win7.c">Stack OverFlow</a></html>.<br>
+	* <html><a href="https://github.com/tekwizz123/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-Uaf-Win7x86.c">Use After Free</a></html>.<br>
+	* <html><a href="https://github.com/tekwizz123/demos/blob/master/HEVD-Vanilla-Bug-Class's/HEVD-UninitializedStackVariableWin7x86.c">Uninitialized Stack Variable</a></html>.<br>
 
 kd & dev:<br>
-* ShellCode: <html><a href="https://github.com/akayn/demos/blob/master/Win10/PayLoads/TokenStealingShellCode.asm">pl.asm</a></html><br>
-* kernelLeaks: <html><a href="https://github.com/akayn/demos/blob/master/Primitives/HMValidateBitmap.cc">leak bitmap bAddr with HMValidateHandle</a></html><br>
+* ShellCode: <html><a href="https://github.com/tekwizz123/demos/blob/master/Win10/PayLoads/TokenStealingShellCode.asm">pl.asm</a></html><br>
+* kernelLeaks: <html><a href="https://github.com/tekwizz123/demos/blob/master/Primitives/HMValidateBitmap.cc">leak bitmap bAddr with HMValidateHandle</a></html><br>
 
 Mitigations Bypass:<br>
-* [RS3-Compatible] ROP Based SMEP Bypass including Gadgets & full debugging info: <html><a href="https://github.com/akayn/demos/blob/master/Win10/SmepByPassWin10x64build.16281Rs3/SmepBypassX64Win10RS3.c">SmepBypassX64Win10RS3.c</a></html><br>
-* [<= RS2-Compatible] BitMap Arbitrary OverWrite: <html><a href="https://github.com/akayn/demos/blob/master/Win10/BitMap_Win_10_15063.0.amd64fre.rs2_release.170317-1834/GdiExp.cc">GdiExp.cc</a></html><br>
+* [RS3-Compatible] ROP Based SMEP Bypass including Gadgets & full debugging info: <html><a href="https://github.com/tekwizz123/demos/blob/master/Win10/SmepByPassWin10x64build.16281Rs3/SmepBypassX64Win10RS3.c">SmepBypassX64Win10RS3.c</a></html><br>
+* [<= RS2-Compatible] BitMap Arbitrary OverWrite: <html><a href="https://github.com/tekwizz123/demos/blob/master/Win10/BitMap_Win_10_15063.0.amd64fre.rs2_release.170317-1834/GdiExp.cc">GdiExp.cc</a></html><br>
 * [!] NOTE: the above is not stable & will work 1/10 in the good case...
 	i will fix in the future.
 
@@ -59,9 +59,9 @@ Re & exploits:<br>
 
 Tools:<br>
 * <html><a href="https://github.com/CoreSecurity/Agafi">gadget finder</a></html>.<br>
-* <html><a href="https://github.com/akayn/GDIObjDump">gdi-dump windbg extension</a></html>.<br>
+* <html><a href="https://github.com/panoramixor/GDIObjDump">gdi-dump windbg extension</a></html>.<br>
 * <html><a href="http://www.iceswordlab.com/2017/06/14/Automatically-Discovering-Windows-Kernel-Information-Leak-Vulnerabilities_en/">digtool fuzzer</a></html>.<br>
-* <html><a href="https://github.com/akayn/winafl">winafl</a></html>.<br>
+* <html><a href="https://github.com/googleprojectzero/winafl">winafl</a></html>.<br>
 
 
 Software:<br>
@@ -72,8 +72,8 @@ Software:<br>
 * <html><a href="https://mh-nexus.de/en/hxd/">Hxd</a></html>.<br>
 
 # See Also:
-* <html><a href="https://github.com/akayn/demos/tree/master/Win10/SmepByPassWin10x64build.16281Rs3">Smep PoC</a></html>.<br>
-* <html><a href="https://github.com/akayn/demos/tree/master/Win10/BitMap_Win_10_15063.0.amd64fre.rs2_release.170317-1834">GdiExp</a></html>.<br>
+* <html><a href="https://github.com/tekwizz123/demos/tree/master/Win10/SmepByPassWin10x64build.16281Rs3">Smep PoC</a></html>.<br>
+* <html><a href="https://github.com/tekwizz123/demos/tree/master/Win10/BitMap_Win_10_15063.0.amd64fre.rs2_release.170317-1834">GdiExp</a></html>.<br>
 
 # Credits
 many tnx to all the great ppl b4 me that did much work already!<br>
